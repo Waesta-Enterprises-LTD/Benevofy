@@ -1,0 +1,99 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="row ">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Members Table</h4>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <form action="" method="get">
+              <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request.GET.search }}"/>
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Member ID</th>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Contributions</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for member in members %}
+              <tr>
+                <td>{{ member.id }}</td>
+                <td>
+                  {% if not member.picture %}
+                    <img
+                      src="{% static 'images/'|add:member.user.member.gender|add:'.jpg' %}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 100px"
+                    />
+                  {% else %}
+                    <img
+                      src="{{ member.picture.url }}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 100px"
+                    />
+                  {% endif %}
+                </td>
+                <td>{{ member.user.get_full_name }}</td>
+                <td>{{ member.user.email }}</td>
+                <td>{{ member.phone }}</td>
+                <td>{{ member.contributions.count }}</td>
+                <td>
+                  <a href="{% url 'member-profile' member.id %}" class="btn btn-outline-primary">Profile</a>
+                  <button class="btn btn-outline-warning">Suspend</button>
+                </td>
+                <td>
+                  <div class="badge badge-outline-{{ member.payment_status_color }}">{{ member.payment_status }}</div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="mt-3">
+            {% if members.has_other_pages %}
+              <ul class="pagination">
+                {% if members.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ members.previous_page_number }}&search={{ request.GET.search }}">Previous</a></li>
+                {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                {% endif %}
+                {% for i in members.paginator.page_range %}
+                  {% if members.number == i %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if members.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ members.next_page_number }}&search={{ request.GET.search }}">Next</a></li>
+                {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

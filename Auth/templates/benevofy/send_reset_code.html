@@ -1,0 +1,24 @@
+{% extends 'benevofy/auth_base.html' %} 
+
+{% block content %}
+<div class="card-body px-5 py-5">
+  <h3 class="card-title text-left mb-3">Reset Password</h3>
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" name="username" class="form-control" id="username" placeholder="Enter your username">
+    </div>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+    <button type="submit" class="btn btn-success btn-block" onclick="this.form.submit();this.classList.add('disabled')">
+      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+      Send Reset Code
+    </button>
+  </form>
+</div>
+{% endblock %}
+

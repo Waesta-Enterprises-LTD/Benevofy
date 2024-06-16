@@ -1,0 +1,14 @@
+{% extends 'benevofy/base.html' %} 
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="card-title">Select Event</h3>
+    <form action="{% url 'pay_for_events' %}" method="post" style="padding: 10px;">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Select Event</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

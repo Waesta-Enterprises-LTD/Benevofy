@@ -1,0 +1,268 @@
+{% extends 'benevofy/base.html' %}
+{% load humanize %}
+
+{% load static %}
+
+{% block content %}
+<div class="content-wrapper">
+  <div class="row">
+    <div class="col-12 col-md-6 grid-margin">
+      <div class="card">
+        <div class="card-body">
+          <h4 class="card-title">Registration Link</h4>
+          <div class="d-flex align-items-center">
+            <input type="text" id="registration-link" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-member' user.member.logged_in_association.registration_code %}" readonly>
+            <button class="btn btn-outline-primary" onclick="copyToClipboard('registration-link')">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Events</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{ events.count }}</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success ">
+                  <span class="mdi mdi-calendar-multiple icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Members</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{ member_count }}</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success">
+                  <span class="mdi mdi-account-multiple icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Polls</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{ polls.count }}</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success">
+                  <span class="mdi mdi-poll icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Savings</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{ user.member.savings_total|intcomma }} UGX</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success">
+                  <span class="mdi mdi-currency-usd icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Transaction History</h4>
+            <canvas id="transaction-history" class="transaction-chart"></canvas>
+            <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+              <div class="text-md-center text-xl-left">
+                <h6 class="mb-1">Transfer to Paypal</h6>
+                <p class="text-muted mb-0">07 Jan 2019, 09:12AM</p>
+              </div>
+              <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
+                <h6 class="font-weight-bold mb-0">$236</h6>
+              </div>
+            </div>
+            <div class="bg-gray-dark d-flex d-md-block d-xl-flex flex-row py-3 px-4 px-md-3 px-xl-4 rounded mt-3">
+              <div class="text-md-center text-xl-left">
+                <h6 class="mb-1">Tranfer to Stripe</h6>
+                <p class="text-muted mb-0">07 Jan 2019, 09:12AM</p>
+              </div>
+              <div class="align-self-center flex-grow text-right text-md-center text-xl-right py-md-2 py-xl-0">
+                <h6 class="font-weight-bold mb-0">$593</h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-8 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Active Events</h4>
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Event Name</th>
+                    <th>Minimum Contribution</th>
+                    <th>Closing Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for event in events %}
+                  <tr>
+                    <td>{{ event.name }}</td>
+                    <td>{{ event.minimum_contribution }}</td>
+                    <td>{{ event.closing_date }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% if events|length > 0 %}
+              <a href="{% url 'select_events' %}" class="btn btn-primary mt-3"><i class="mdi mdi-cash-multiple"></i> Pay Now</a>
+              {% else %}
+              <a href="{% url 'create-event' %}" class="btn btn-primary mt-3">Create Event</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row ">
+      <div class="col-12 grid-margin">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Members Table</h4>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Member ID</th>
+                    <th>Picture</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Contributions</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for member in members %}
+                  <tr>
+                    <td>{{ member.id }}</td>
+                    <td>
+                      {% if not member.picture %}
+                        <img
+                          src="{% static 'images/'|add:member.user.member.gender|add:'.jpg' %}"
+                          alt="profile"
+                          class="rounded-circle img-fluid"
+                          style="max-width: 100px"
+                        />
+                      {% else %}
+                        <img
+                          src="{{ member.picture.url }}"
+                          alt="profile"
+                          class="rounded-circle img-fluid"
+                          style="max-width: 100px"
+                        />
+                      {% endif %}
+                    </td>
+                    <td>{{ member.user.get_full_name }}</td>
+                    <td>{{ member.user.email }}</td>
+                    <td>{{ member.phone }}</td>
+                    <td>{{ member.contributions.count }}</td>
+                    <td>
+                      <a href="{% url 'member-profile' member.id %}" class="btn btn-outline-primary">Profile</a>
+                      <button class="btn btn-outline-warning">Suspend</button>
+                    </td>
+                    <td>
+                      <div class="badge badge-outline-{{ member.payment_status_color }}">{{ member.payment_status }}</div>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              <div class="mt-3">
+                {% if members.has_other_pages %}
+                  <ul class="pagination">
+                    {% if members.has_previous %}
+                      <li class="page-item"><a class="page-link" href="?page={{ members.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                      <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                    {% endif %}
+                    {% for i in members.paginator.page_range %}
+                      {% if members.number == i %}
+                        <li class="page-item active"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% else %}
+                        <li class="page-item"><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+                    {% if members.has_next %}
+                      <li class="page-item"><a class="page-link" href="?page={{ members.next_page_number }}">Next</a></li>
+                    {% else %}
+                      <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                    {% endif %}
+                  </ul>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      function copyToClipboard(elementId) {
+        var aux = document.createElement("input");
+        aux.setAttribute("value", document.getElementById(elementId).innerHTML);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+      }
+    </script>
+  </div>
+{% endblock %}
+
+{% block extra_head %}
+    <link rel="stylesheet" href="{% static 'font-awesome/css/font-awesome.min.css' %}">
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'font-awesome/js/fontawesome.min.js' %}"></script>
+{% endblock %}
+
+{% block extra_context %}
+    {% with events=Events.models.Event.objects.all %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+

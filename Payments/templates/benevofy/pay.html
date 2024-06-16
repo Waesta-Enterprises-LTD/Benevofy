@@ -1,0 +1,30 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="card-title">Pay for Events</h3>
+    <form method="post" action="{% url 'request_to_pay' %}" style="padding: 10px;">
+      {% csrf_token %}
+        <div class="form-group">
+          <label for="phone">Phone number</label>
+          <input type="number" class="form-control" id="phone" name="phone" placeholder="Phone number">
+        </div>
+        <select hidden multiple class="form-control" id="events" name="events">
+          {% for event in events %}
+            <option selected value="{{ event.id }}">{{ event.name }}</option>
+          {% endfor %}
+        </select>
+      {% for event in events %}
+        <div class="form-group">
+          <label for="amount">Amount</label>
+          <input type="number" class="form-control" id="amount" name="amount-{{ event.id }}" placeholder="Amount for {{ event.name }}" min="{{event.minimum_contribution}}">
+        </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
+

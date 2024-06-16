@@ -1,0 +1,91 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
+          Polls Table
+          <a href="{% url 'create-poll' %}" class="btn btn-outline-primary">
+            <i class="mdi mdi-plus"></i> Create Poll
+          </a>
+        </h4>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <form action="" method="get">
+              <div class="input-group">
+                <input type="text" name="search" class="form-control" placeholder="Search..." value="{{ request.GET.search }}" />
+                <div class="input-group-append">
+                  <button class="btn btn-primary" type="submit">Search</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Candidates</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for poll in polls %}
+              <tr>
+                <td>{{ poll.id }}</td>
+                <td>{{ poll.title }}</td>
+                <td>{{ poll.candidates.count }}</td>
+                <td>
+                  <div class="badge badge-outline-{{ poll.status_color }}">{{ poll.status }}</div>
+                </td>
+                <td>
+                  <a href="{% url 'vote' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</a>
+                  <a href="{% url 'add_candidate' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-account-plus"></i> Add Candidate</a>
+                  <a href="{% url 'delete-poll' poll.id %}" class="btn btn-outline-danger">Delete</a>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="4" class="text-center">No polls found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          <div class="mt-3">
+            {% if polls.has_other_pages %}
+              <ul class="pagination">
+                {% if polls.has_previous %}
+                  <li class="page-item"><a class="page-link" href="?page={{ polls.previous_page_number }}&search={{ request.GET.search }}">Previous</a></li>
+                {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#">Previous</a></li>
+                {% endif %}
+                {% for i in polls.paginator.page_range %}
+                  {% if polls.number == i %}
+                    <li class="page-item active"><a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a></li>
+                  {% else %}
+                    <li class="page-item"><a class="page-link" href="?page={{ i }}&search={{ request.GET.search }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+                {% if polls.has_next %}
+                  <li class="page-item"><a class="page-link" href="?page={{ polls.next_page_number }}&search={{ request.GET.search }}">Next</a></li>
+                {% else %}
+                  <li class="page-item disabled"><a class="page-link" href="#">Next</a></li>
+                {% endif %}
+              </ul>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

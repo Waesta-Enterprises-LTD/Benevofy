@@ -1,0 +1,68 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block content %}
+<div class="row">
+  <div class="col-12 grid-margin">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
+          Vote for {{ poll.title }}
+        </h4>
+
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Candidate</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for candidate in poll.candidates.all %}
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    {% if not member.picture %}
+                    <img
+                      src="{% static 'images/'|add:candidate.member.user.member.gender|add:'.jpg' %}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 100px"
+                    />
+                  {% else %}
+                    <img
+                      src="{{ candidate.member.picture.url }}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 100px"
+                    />
+                  {% endif %}
+                    <span class="ml-3">{{ candidate.member.user.get_full_name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <form action="{% url 'vote' poll.id %}" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
+                    <button type="submit" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</button>
+                    <a href="{% url 'disqualify_candidate' poll.id candidate.id %}" value="{{ candidate.id }}" class="btn btn-outline-danger"><i class="mdi mdi-account-off"></i> Disqualify</a>
+                    <a href="{% url 'member-profile' candidate.member.id %}" class="btn btn-outline-success"><i class="mdi mdi-account"></i> View Profile</a>
+                  </form>
+                </td>
+              </tr>
+              {% empty %}
+              <tr>
+                <td colspan="3" class="text-center">No candidates found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

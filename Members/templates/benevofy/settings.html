@@ -1,0 +1,32 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Settings</h4>
+            <form class="forms-sample" method="post" enctype="multipart/form-data" action="{% url 'settings' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="picture">Profile Picture</label>
+                    <input type="file" class="form-control" id="picture" name="picture">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="text" class="form-control" id="phone" value="{{ user.member.phone }}" name="phone">
+                </div>
+                <div class="form-group">
+                    <label for="gender">Gender</label>
+                    <select class="form-control" id="gender" name="gender">
+                        <option value="Male" {% if user.member.gender == 'Male' %}selected{% endif %}>Male</option>
+                        <option value="Female" {% if user.member.gender == 'Female' %}selected{% endif %}>Female</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary mr-2">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
