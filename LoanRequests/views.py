@@ -33,6 +33,7 @@ def approve_loan_request(request, request_id):
     loan_request.save()
     loan = Loan(
         user=request.user.member,
+        association=loan_request.association,
         amount=loan_request.amount,
         interest_rate=request.user.member.logged_in_association.loan_interest_rate,
         repayment_date=loan_request.repayment_date,
