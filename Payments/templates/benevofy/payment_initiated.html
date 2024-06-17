@@ -1,0 +1,31 @@
+{% extends 'benevofy/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="mb-4" style="font-size: 50;">
+            <i class="mdi mdi-check-circle text-success mdi-4x"></i>
+          </div>
+          <h5 class="card-title">Payment Initiated</h5>
+          <p class="card-text">Your payment has been successfully initiated. You will be prompted to insert pin. <span id="countdown"></span></p>
+          <script>
+            var countdown = 10;
+            setInterval(function() {
+              countdown = countdown - 1;
+              if (countdown < 0) {
+                window.location.href = '/';
+              } else {
+                document.getElementById("countdown").innerHTML = "Redirecting you in " + countdown + " seconds.";
+              }
+            }, 1000);
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

@@ -10,6 +10,7 @@ from .forms import ContributeEventForm, ContributionForm
 from uuid import uuid4
 import requests
 from django.http import HttpResponse
+from django.shortcuts import redirect
 
 
 logger = logging.getLogger(__name__)
@@ -41,11 +42,13 @@ def request_to_pay(request):
         member = request.user.member
         phone = request.POST.get('phone')
         event_ids = request.POST.getlist('events')
+        events = Event.objects.filter(pk__in=event_ids)
         total_amount = 0
         reference = str(uuid4())
         for event_id in event_ids:
             event = Event.objects.get(pk=event_id)
-            amount = request.POST.get(f'amount_{event_id}')
+            print(request.POST)
+            amount = request.POST.get(f'amount-{event_id}')
             total_amount += float(amount)
             contribution = EventContribution.objects.create(
                 user=member,
@@ -57,15 +60,22 @@ def request_to_pay(request):
         headers = {
             "Content-Type": "application/json",
             "Accept": "application/vnd.relworx.v2",
-            "Authorization": "Bearer YOUR_API_KEY"
+            "Authorization": "Bearer ec719b1a0db84d.YNrIn4iWVanw1Y0ptYvrVA"
         }
+        if phone.startswith('256'):
+            currency = 'UGX'
+        elif phone.startswith('254'):
+            currency = 'KES'
+        else:
+            return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'events': events})
         payload = {
-            "account_no": "RELJH012BV45P",
+            "account_no": member.logged_in_association.rel_account,
             "reference": reference,
-            "msisdn": phone,
-            "currency": "UGX",
+            "msisdn": '+'+phone,
+            "currency": currency,
             "amount": total_amount,
-            "description": "Payment Request."
+            "description": "Events Payment Request."
         }
         response = requests.request("POST", url, headers=headers, json=payload)
-        print(response.text)
+        print(response.json())
+        return redirect('payment_initiated')

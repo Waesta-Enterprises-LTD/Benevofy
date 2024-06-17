@@ -11,6 +11,13 @@
           <label for="phone">Phone number</label>
           <input type="number" class="form-control" id="phone" name="phone" placeholder="Phone number">
         </div>
+        <div class="form-group">
+          {% if error %}
+            <div class="alert alert-danger" role="alert">
+              {{ error }}
+            </div>
+          {% endif %}
+        </div>
         <select hidden multiple class="form-control" id="events" name="events">
           {% for event in events %}
             <option selected value="{{ event.id }}">{{ event.name }}</option>
@@ -18,8 +25,8 @@
         </select>
       {% for event in events %}
         <div class="form-group">
-          <label for="amount">Amount</label>
-          <input type="number" class="form-control" id="amount" name="amount-{{ event.id }}" placeholder="Amount for {{ event.name }}" min="{{event.minimum_contribution}}">
+          <label for="amount">Amount for {{ event.name }}</label>
+          <input type="number" class="form-control" id="amount" name="amount-{{ event.id }}" placeholder="Amount for {{ event.name }} minimum {{event.minimum_contribution}}" min="{{event.minimum_contribution}}">
         </div>
       {% endfor %}
       <button type="submit" class="btn btn-success">Submit</button>
@@ -27,4 +34,5 @@
   </div>
 </div>
 {% endblock %}
+
 
