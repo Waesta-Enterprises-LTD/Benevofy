@@ -4,7 +4,7 @@ from .models import LoanRequest
 class LoanRequestForm(forms.ModelForm):
     class Meta:
         model = LoanRequest
-        fields = ('amount', 'guarantors', 'repayment_date')
+        fields = ('recieving_number', 'amount', 'guarantors', 'repayment_date')
         widgets = {
             'repayment_date': forms.DateInput(attrs={'type': 'date'}),
         }

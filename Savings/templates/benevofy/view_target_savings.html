@@ -7,15 +7,13 @@
   <div class="col-12 grid-margin">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
-          Savings Table
-          <a href="{% url 'save_money' %}" class="btn btn-outline-primary">
-            <i class="mdi mdi-plus"></i> Save Money
-          </a>
-          <a href="{% url 'create_saving_target' %}" class="btn btn-outline-success">
-            <i class="mdi mdi-plus"></i> Create Target
-          </a>
-        </h4>
+        <div class="mb-2">
+            <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
+                Target Savings Table
+              </h4>
+              <span class="text-muted">{{target.target_name}}</span>
+        </div>
+        
 
         <div class="row mb-3">
           <div class="col-md-6">
@@ -35,27 +33,20 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>Target</th>
+                <th>Date</th>
                 <th>Amount Saved</th>
-                <th>Last Saved</th>
-                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {% for saving_target in saving_targets %}
+              {% for saving in savings %}
               <tr>
-                <td>{{ saving_target.id }}</td>
-                <td>{{ saving_target.target_name }}</td>
-                <td>{{ saving_target.amount_saved|intcomma }} UGX</td>
-                <td>{{ saving_target.last_saved_date|date:"SHORT_DATE_FORMAT" }}</td>
-                <td>
-                  <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-currency-usd"></i> Savings</a>
-                  <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
-                </td>
+                <td>{{ saving.id }}</td>
+                <td>{{ saving.saved_date|date:"SHORT_DATE_FORMAT" }}</td>
+                <td>{{ saving.amount_saved|intcomma }} UGX</td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="5" class="text-center">No savings found.</td>
+                <td colspan="5" class="text-center">No target savings found.</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -89,4 +80,3 @@
   </div>
 </div>
 {% endblock %}
-

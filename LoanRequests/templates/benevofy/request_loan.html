@@ -6,9 +6,13 @@
     <h3 class="card-title">Request Loan</h3>
     <form method="post" style="padding: 10px;">
       {% csrf_token %}
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
       {{ form.as_p }}
       <button type="submit" class="btn btn-success">Request Loan</button>
     </form>
   </div>
 </div>
 {% endblock %}
+

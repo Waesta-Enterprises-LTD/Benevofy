@@ -18,8 +18,9 @@ def save_money(request):
             form.instance.association = member.logged_in_association
             form.instance.user = member
             form.instance.reference = reference
-            form.save()
+            saving = form.save()
         target = form.cleaned_data['target']
+        target.savings.add(saving)
         phone = request.POST.get('phone')
         amount = form.cleaned_data['amount']
         if phone.startswith('256'):
@@ -54,7 +55,7 @@ def create_saving_target(request):
         if form.is_valid():
             form.instance.user = request.user.member
             form.save()
-            return redirect('savings')
+            return redirect('view_savings')
     else:
         form = SavingTargetForm()
     return render(request, 'benevofy/create_saving_target.html', {'form': form})
@@ -62,4 +63,10 @@ def create_saving_target(request):
 def view_savings(request):
     saving_targets = SavingTarget.objects.filter(Q(association=request.user.member.logged_in_association) | Q(user=request.user.member))
     return render(request, 'benevofy/view_savings.html', {'saving_targets': saving_targets})
+
+
+def view_target_savings(request, target_id):
+    target = SavingTarget.objects.get(pk=target_id)
+    savings = target.savings.all()
+    return render(request, 'benevofy/view_target_savings.html', {'target': target, 'savings': savings})
 
