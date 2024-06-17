@@ -1,7 +1,8 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Loan
 from .forms import LoanRepaymentForm
 from uuid import uuid4
+import requests
 
 def view_loans(request):
     loans = Loan.objects.all()
@@ -13,9 +14,11 @@ def apply_for_loan(request):
 def repay_loan(request, loan_id):
     loan = Loan.objects.get(id=loan_id)
     form = LoanRepaymentForm(initial={'loan': loan})
+    member = request.user.member
     if request.method == 'POST':
         reference = str(uuid4())
         form = LoanRepaymentForm(request.POST, initial={'loan': loan})
+        print(form.errors)
         if form.is_valid():
             form.instance.reference = reference
             form.instance.user = loan.user

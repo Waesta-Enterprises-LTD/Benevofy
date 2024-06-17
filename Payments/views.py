@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from Events.models import Event
 from Savings.models import Saving
+from Loans.models import LoanRepayment
 
 
 def payment_initiated(request):
@@ -20,10 +21,17 @@ def webhook_receiver(request):
         contributions = EventContribution.objects.filter(reference=data['customer_reference'])
         if contributions.count() == 0:
             savings = Saving.objects.filter(reference=data['customer_reference'])
-            if data['status'] == 'success':
-                savings.update(status='Paid')
+            if savings.count() == 0:
+                loan_repayment = LoanRepayment.objects.filter(reference=data['customer_reference'])
+                if data['status'] == 'success':
+                    loan_repayment.update(status='Paid')
+                else:
+                    loan_repayment.delete()
             else:
-                savings.delete()
+                if data['status'] == 'success':
+                    savings.update(status='Paid')
+                else:
+                    savings.delete()
         else:
             if data['status'] == 'success':
                 contributions.update(status='Paid')

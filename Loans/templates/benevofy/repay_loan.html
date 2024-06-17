@@ -10,9 +10,15 @@
         <label for="phone">Phone number</label>
         <input type="number" class="form-control" id="phone" name="phone" placeholder="Phone">
       </div>
+      {% if error %}
+        <div class="alert alert-danger" role="alert">
+          {{ error }}
+        </div>
+      {% endif %}
       {{ form.as_p }}
       <button type="submit" class="btn btn-success">Repay Loan</button>
     </form>
   </div>
 </div>
 {% endblock %}
+
