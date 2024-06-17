@@ -11,7 +11,7 @@ def create_poll(request):
         if form.is_valid():
             form.instance.association = request.user.member.logged_in_association
             form.save()
-            return render(request, 'benevofy/create_poll.html', {'form': form})
+            return redirect('polls')
     return render(request, 'benevofy/create_poll.html', {'form': form})
 
 
