@@ -6,6 +6,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+import plotly.graph_objects as go
+import plotly.io as pio
+
+
 
 @login_required(login_url='login-member')
 def member_dashboard(request):
@@ -15,7 +19,35 @@ def member_dashboard(request):
     members = paginator.get_page(page)
     member_count = Member.objects.filter(associations=request.user.member.logged_in_association).count()
     polls = Poll.objects.filter(association=request.user.member.logged_in_association)
-    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count})
+    labels = ['PAID', 'UNPAID']
+    values = [30, 40]
+
+    # Create the donut chart
+    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4, 
+                                 marker=dict(colors=['green', 'red'], 
+                                            line=dict(color='black', width=1)))])
+    fig.update_layout(
+        autosize=True,
+        margin=dict(
+            l=10,
+            r=10,
+            b=10,
+            t=10,
+            pad=4
+        ),
+        annotations=[dict(
+            showarrow=False,
+            text="",
+            x=0.5,
+            y=0.5
+        )],
+        width=300,
+        height=300
+    )
+    
+    # Convert the Plotly figure to JSON
+    html_content = pio.to_html(fig, full_html=False)
+    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content})
 
 
 def profile(request):
