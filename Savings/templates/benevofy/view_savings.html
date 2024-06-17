@@ -35,20 +35,23 @@
             <thead>
               <tr>
                 <th>ID</th>
-                <th>User</th>
-                <th>Amount</th>
                 <th>Target</th>
-                <th>Date Saved</th>
+                <th>Amount Saved</th>
+                <th>Last Saved</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
-              {% for saving in savings %}
+              {% for saving_target in saving_targets %}
               <tr>
-                <td>{{ saving.id }}</td>
-                <td>{{ saving.user.username }}</td>
-                <td>{{ saving.amount|intcomma }} UGX</td>
-                <td>{{ saving.target }}</td>
-                <td>{{ saving.date_saved }}</td>
+                <td>{{ saving_target.id }}</td>
+                <td>{{ saving_target.target_name }}</td>
+                <td>{{ saving_target.amount_saved|intcomma }} UGX</td>
+                <td>{{ saving_target.last_saved_date|date:"SHORT_DATE_FORMAT" }}</td>
+                <td>
+                  <a href="" class="btn btn-outline-primary"><i class="mdi mdi-currency-usd"></i> Savings</a>
+                  <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
+                </td>
               </tr>
               {% empty %}
               <tr>

@@ -6,9 +6,17 @@
     <h3 class="card-title">Save Money</h3>
     <form method="post" style="padding: 10px;">
       {% csrf_token %}
+      {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+      {% endif %}
+      <div class="form-group">
+        <label for="phone">Phone</label>
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number">
+      </div>
       {{ form.as_p }}
       <button type="submit" class="btn btn-success">Save Money</button>
     </form>
   </div>
 </div>
 {% endblock %}
+

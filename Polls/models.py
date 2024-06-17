@@ -1,6 +1,7 @@
 from django.db import models
 
 class Poll(models.Model):
+    association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=128)
     candidates = models.ManyToManyField('Candidate', related_name='polls')
     closing_date = models.DateField()

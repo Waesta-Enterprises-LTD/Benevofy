@@ -134,6 +134,7 @@
                     <th>Event Name</th>
                     <th>Minimum Contribution</th>
                     <th>Closing Date</th>
+                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -142,6 +143,9 @@
                     <td>{{ event.name }}</td>
                     <td>{{ event.minimum_contribution }}</td>
                     <td>{{ event.closing_date }}</td>
+                    <td>
+                      <a href="{% url 'view_paid_list' event.id %}" class="btn btn-outline-primary">Paid List</a>
+                    </td>
                   </tr>
                   {% endfor %}
                 </tbody>

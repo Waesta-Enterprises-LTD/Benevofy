@@ -11,7 +11,7 @@ import tempfile
 
 
 def events(request):
-    events = Event.objects.all()
+    events = Event.objects.filter(association=request.user.member.logged_in_association)
     paginator = Paginator(events, 10)
     page = request.GET.get('page')
     events = paginator.get_page(page)

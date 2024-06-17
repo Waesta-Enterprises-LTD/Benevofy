@@ -11,6 +11,7 @@ class Event(models.Model):
     minimum_contribution = models.IntegerField(null=True, blank=True)
     contributions = models.ManyToManyField('Contributions.EventContribution', blank=True, related_name='event_contributions')
     closing_date = models.DateField(null=True, blank=True)
+    status = models.CharField(max_length=10, choices=[('Active', 'Active'), ('Closed', 'Closed')], default='Active')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

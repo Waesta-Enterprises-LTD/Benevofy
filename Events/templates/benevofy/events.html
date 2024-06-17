@@ -35,6 +35,7 @@
                 <th>Name</th>
                 <th>Minimum Contribution</th>
                 <th>Contributions</th>
+                <th>Status</th>
                 <th>Closing Date</th>
                 <th>Action</th>
               </tr>
@@ -46,6 +47,7 @@
                 <td>{{ event.name }}</td>
                 <td>{{ event.minimum_contribution|intcomma }} UGX</td>
                 <td>{{ event.contributions.count }}</td>
+                <td>{{ event.status }}</td>
                 <td>{{ event.closing_date }}</td>
                 <td>
                   <a href="{% url 'update-event' event.id %}" class="btn btn-outline-primary">Update</a>

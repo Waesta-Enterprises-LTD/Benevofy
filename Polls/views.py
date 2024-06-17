@@ -9,6 +9,7 @@ def create_poll(request):
     if request.method == 'POST':
         form = PollForm(request.POST)  
         if form.is_valid():
+            form.instance.association = request.user.member.logged_in_association
             form.save()
             return render(request, 'benevofy/create_poll.html', {'form': form})
     return render(request, 'benevofy/create_poll.html', {'form': form})

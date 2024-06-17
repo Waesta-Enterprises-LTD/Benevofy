@@ -9,12 +9,12 @@ from django.db.models import Q
 
 @login_required(login_url='login-member')
 def member_dashboard(request):
-    events = Event.objects.all()
-    paginator = Paginator(Member.objects.all(), 6)
+    events = Event.objects.filter(status='Active', association=request.user.member.logged_in_association)
+    paginator = Paginator(Member.objects.filter(associations=request.user.member.logged_in_association), 6)
     page = request.GET.get('page')
     members = paginator.get_page(page)
-    member_count = Member.objects.count()
-    polls = Poll.objects.all()
+    member_count = Member.objects.filter(associations=request.user.member.logged_in_association).count()
+    polls = Poll.objects.filter(association=request.user.member.logged_in_association)
     return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count})
 
 
@@ -43,9 +43,9 @@ def view_members(request):
             Q(user__first_name__icontains=query) |
             Q(user__last_name__icontains=query) |
             Q(user__email__icontains=query)
-        )
+        ).filter(associations=request.user.member.logged_in_association)
     else:
-        members = Member.objects.all()
+        members = Member.objects.filter(associations=request.user.member.logged_in_association)
     paginator = Paginator(members, 6)
     page = request.GET.get('page')
     members = paginator.get_page(page)
