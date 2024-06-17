@@ -48,9 +48,12 @@
                   <div class="badge badge-outline-{{ poll.status_color }}">{{ poll.status }}</div>
                 </td>
                 <td>
+                  {% if request.user.member not in poll.voters.all %}
                   <a href="{% url 'vote' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</a>
+                  {% endif %}
                   <a href="{% url 'add_candidate' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-account-plus"></i> Add Candidate</a>
                   <a href="{% url 'delete-poll' poll.id %}" class="btn btn-outline-danger">Delete</a>
+                  <a href="" class="btn btn-outline-primary"><i class="mdi mdi-chart-bar"></i> Results</a>
                 </td>
               </tr>
               {% empty %}

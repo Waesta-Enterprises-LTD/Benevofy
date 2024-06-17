@@ -58,6 +58,21 @@ def vote(request, poll_id):
     return render(request, 'benevofy/vote.html', {'member': member, 'poll': poll})
 
 
+def vote_candidate(request, poll_id, candidate_id):
+    poll = Poll.objects.get(pk=poll_id)
+    candidate = poll.candidates.get(pk=candidate_id)
+    candidate.votes.add(request.user.member)
+    poll.voters.add(request.user.member)
+    return redirect('thanks_for_voting', poll_id, candidate_id)
+
+
+def thanks_for_voting(request, poll_id, candidate_id):
+    poll = Poll.objects.get(pk=poll_id)
+    candidate = poll.candidates.get(pk=candidate_id)
+    return render(request, 'benevofy/thanks_for_voting.html', {'poll': poll, 'candidate': candidate})
+    
+
+
 def view_polls(request):
     polls = Poll.objects.all()
     return render(request, 'benevofy/view_polls.html', {'polls': polls})

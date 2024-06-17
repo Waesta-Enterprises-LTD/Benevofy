@@ -21,6 +21,7 @@ def save_money(request):
             saving = form.save()
         target = form.cleaned_data['target']
         target.savings.add(saving)
+        member.savings.add(saving)
         phone = request.POST.get('phone')
         amount = form.cleaned_data['amount']
         if phone.startswith('256'):

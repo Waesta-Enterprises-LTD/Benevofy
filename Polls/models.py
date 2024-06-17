@@ -6,6 +6,7 @@ class Poll(models.Model):
     candidates = models.ManyToManyField('Candidate', related_name='polls')
     closing_date = models.DateField()
     created_on = models.DateField(auto_now_add=True)
+    voters = models.ManyToManyField('Members.Member', related_name='polls')
     status = models.CharField(max_length=10, choices=[('Active', 'Active'), ('Closed', 'Closed')], default='Active')
 
     def __str__(self):

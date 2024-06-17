@@ -17,7 +17,7 @@ class Member(models.Model):
 
     def savings_total(self):
         total = 0
-        for savings in self.savings.all():
+        for savings in self.savings.filter(status='Paid'):
             total += savings.amount
         return total
 

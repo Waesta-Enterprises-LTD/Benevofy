@@ -45,8 +45,7 @@
                 <td>
                   <form action="{% url 'vote' poll.id %}" method="post">
                     {% csrf_token %}
-                    <input type="hidden" name="candidate_id" value="{{ candidate.id }}">
-                    <button type="submit" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</button>
+                    <a href="{% url 'vote_candidate' poll.id candidate.id %}" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</a>
                     <a href="{% url 'disqualify_candidate' poll.id candidate.id %}" value="{{ candidate.id }}" class="btn btn-outline-danger"><i class="mdi mdi-account-off"></i> Disqualify</a>
                     <a href="{% url 'member-profile' candidate.member.id %}" class="btn btn-outline-success"><i class="mdi mdi-account"></i> View Profile</a>
                   </form>

@@ -1,0 +1,30 @@
+{% extends 'benevofy/base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8">
+      <div class="card">
+        <div class="card-body text-center">
+          <div class="mb-4" style="font-size: 50;">
+            <img src="{{ candidate.member.picture.url }}" class="img-fluid rounded-circle" alt="Candidate Picture" style="height: 100px; width: 100px;">
+          <h5 class="card-title">{{ candidate.name }}</h5>
+          <h5 class="card-title">Thank you for voting {{ candidate.member.user.get_full_name }} for {{ poll.title }}</h5>
+          <p class="card-text">Your vote has been successfully recorded. <span id="countdown"></span></p>
+          <script>
+            var countdown = 10;
+            setInterval(function() {
+              countdown = countdown - 1;
+              if (countdown < 0) {
+                window.location.href = '/';
+              } else {
+                document.getElementById("countdown").innerHTML = "Redirecting you in " + countdown + " seconds.";
+              }
+            }, 1000);
+          </script>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
