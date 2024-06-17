@@ -15,7 +15,7 @@ class Loan(models.Model):
         return f"{self.amount} - {self.association} Association"
 
 class LoanRepayment(models.Model):
-    loan = models.ForeignKey('Loans.Loan', on_delete=models.CASCADE, related_name='repayments')
+    loan = models.ForeignKey('Loans.Loan', on_delete=models.SET_NULL, null=True, related_name='repayments')
     user = models.ForeignKey('Members.Member', on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     payment_date = models.DateTimeField(auto_now_add=True)

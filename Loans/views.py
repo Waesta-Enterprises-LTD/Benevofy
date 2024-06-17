@@ -15,9 +15,10 @@ def repay_loan(request, loan_id):
     form = LoanRepaymentForm(initial={'loan': loan})
     if request.method == 'POST':
         reference = str(uuid4())
-        form = LoanRepaymentForm(request.POST)
+        form = LoanRepaymentForm(request.POST, initial={'loan': loan})
         if form.is_valid():
             form.instance.reference = reference
+            form.instance.user = loan.user
             form.save()
             phone = request.POST.get('phone')
             amount = form.cleaned_data['amount']
