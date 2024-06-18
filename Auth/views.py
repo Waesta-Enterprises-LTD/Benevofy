@@ -170,7 +170,7 @@ def register_member(request, registration_code):
                 })
                 from_email = settings.DEFAULT_FROM_EMAIL
                 to_email = [user.email]
-                send_mail(subject, message, from_email, to_email, fail_silently=False)
+                send_mail(subject, message, from_email, to_email, fail_silently=False, html_message=message)
                 return redirect('login-member')
         else:
             return render(request, 'benevofy/register_member.html', {'error': 'Passwords do not match', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
