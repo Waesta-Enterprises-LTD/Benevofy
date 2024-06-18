@@ -4,7 +4,7 @@ from uuid import uuid4
 
 class Association(models.Model):
     name = models.CharField(max_length=100)
-    logo = models.ImageField(upload_to='associations/logos')
+    logo = models.ImageField(upload_to='Associations/logos')
     rel_account = models.CharField(max_length=100, null=True, blank=True)
     members = models.ManyToManyField('Members.Member', blank=True)
     contributions = models.ManyToManyField('Contributions.EventContribution', blank=True)
