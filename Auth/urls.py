@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login_member, login_admin, reset_password, send_reset_code, logout_user, change_password, register_member
+from .views import login_member, login_admin, reset_password, send_reset_code, logout_user, change_password, register_member, verify_email
 
 
 urlpatterns = [
@@ -9,5 +9,6 @@ urlpatterns = [
     path('send-reset-code/', send_reset_code, name='send-reset-code'),
     path('change-password/', change_password, name='change-password'),
     path('register-member/<registration_code>/', register_member, name='register-member'),
+    path('verify-email/<verification_code>/', verify_email, name='verify-email'),
     path('logout/', logout_user, name='logout'),
 ]

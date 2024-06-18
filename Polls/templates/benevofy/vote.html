@@ -24,16 +24,16 @@
               <tr>
                 <td>
                   <div class="d-flex align-items-center">
-                    {% if not member.picture %}
+                    {% if not candidate.member.picture %}
                     <img
-                      src="{% static 'images/'|add:candidate.member.user.member.gender|add:'.jpg' %}"
+                      src="{% static 'images/'|add:member.user.member.gender|add:'.jpg' %}"
                       alt="profile"
                       class="rounded-circle img-fluid"
                       style="max-width: 100px"
                     />
                   {% else %}
                     <img
-                      src="{{ candidate.member.picture.url }}"
+                      src="{{ member.picture.url }}"
                       alt="profile"
                       class="rounded-circle img-fluid"
                       style="max-width: 100px"

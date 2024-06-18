@@ -12,8 +12,17 @@
           <h4 class="card-title">Registration Link</h4>
           <div class="d-flex align-items-center">
             <input type="text" id="registration-link" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-member' user.member.logged_in_association.registration_code %}" readonly>
-            <button class="btn btn-outline-primary" onclick="copyToClipboard('registration-link')">Copy</button>
+            <button class="btn btn-outline-primary" onclick="copyLinkToClipboard()">Copy</button>
           </div>
+          <script>
+            function copyLinkToClipboard() {
+              var copyText = document.getElementById("registration-link");
+              copyText.select();
+              copyText.setSelectionRange(0, 99999); // for mobile device
+              document.execCommand("copy");
+              alert("Registration link copied to clipboard");
+            }
+          </script>
         </div>
       </div>
     </div>

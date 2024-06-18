@@ -36,7 +36,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'info@benevofy.net'
 EMAIL_HOST_PASSWORD = 'intention12@'
-DEFAULT_FROM_EMAIL = 'info@benevofy.net'
+DEFAULT_FROM_EMAIL = 'Benevofy <info@benevofy.net>'
 
 
 

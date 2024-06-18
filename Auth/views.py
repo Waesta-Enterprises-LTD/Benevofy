@@ -19,11 +19,26 @@ def login_member(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            if user.is_authenticated:
-                if request.GET.get('next'):
-                    return redirect(request.GET.get('next'))
-                return redirect('member-dashboard')
+            if user.member.email_verified:
+                login(request, user)
+                if user.is_authenticated:
+                    if request.GET.get('next'):
+                        return redirect(request.GET.get('next'))
+                    return redirect('member-dashboard')
+            else:
+                verification_code = uuid4()
+                user.member.verification_code = verification_code
+                user.member.save()
+                subject = 'Benevofy Email Verification'
+                message = render_to_string('benevofy/verification_email.html', {
+                    'user': user,
+                    'verification_code': str(verification_code),
+                    'request': request
+                })
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = [user.email]
+                send_mail(subject, message.strip(), from_email, to_email, fail_silently=False, html_message=message)
+                return render(request, 'benevofy/login_member.html', {'error': 'A verification email has been sent to your email.', 'username': username, 'password': password})
         else:
             return render(request, 'benevofy/login_member.html', {'error': 'Invalid username or password'})
     else:
@@ -125,6 +140,7 @@ def register_member(request, registration_code):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
+        phone = request.POST.get('phone')
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
@@ -137,10 +153,24 @@ def register_member(request, registration_code):
             else:
                 user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=last_name)
                 user.save()
+                verification_code = uuid4()
                 member = Member.objects.create(user=user, gender=gender)
+                member.associations.add(association)
+                member.logged_in_association = association
+                member.phone = phone
+                member.verification_code = verification_code
                 member.save()
                 association.registration_code = uuid4()
                 association.save()
+                subject = 'Benevofy Email Verification'
+                message = render_to_string('benevofy/verification_email.html', {
+                    'user': user,
+                    'verification_code': str(verification_code),
+                    'request': request
+                })
+                from_email = settings.DEFAULT_FROM_EMAIL
+                to_email = [user.email]
+                send_mail(subject, message, from_email, to_email, fail_silently=False)
                 return redirect('login-member')
         else:
             return render(request, 'benevofy/register_member.html', {'error': 'Passwords do not match', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
@@ -151,3 +181,12 @@ def logout_user(request):
     logout(request)
     return redirect('login-member')
 
+
+def verify_email(request, verification_code):
+    try:
+        member = Member.objects.get(verification_code=verification_code)
+        member.email_verified = True
+        member.save()
+        return redirect('login-member')
+    except Member.DoesNotExist:
+        return redirect('login-member')

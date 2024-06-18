@@ -43,7 +43,7 @@ def disqualify_candidate(request, poll_id, candidate_id):
 def delete_poll(request, poll_id):
     poll = Poll.objects.get(pk=poll_id)
     poll.delete()
-    return render(request, 'benevofy/delete_poll.html', {'poll': poll})
+    return redirect('polls')
 
 def detail(request, question_id):
     return HttpResponse("You're looking at question %s." % question_id)

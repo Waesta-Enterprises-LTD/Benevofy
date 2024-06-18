@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 
 class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    email_verified = models.BooleanField(default=False)
+    verification_code = models.CharField(max_length=500, null=True, blank=True)
     picture = models.ImageField(upload_to='Members/profile_pictures/', null=True, blank=True)
     associations = models.ManyToManyField('Associations.Association', blank=True, related_name='member_associations')
     contributions = models.ManyToManyField('Contributions.EventContribution', blank=True, related_name='member_contributions')

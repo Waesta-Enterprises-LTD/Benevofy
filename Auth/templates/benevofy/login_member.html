@@ -7,7 +7,7 @@
     {% csrf_token %}
     {% if error %}
     <div class="alert alert-danger" role="alert">
-      {{ error }}
+      {{ error|safe }}
     </div>
     {% endif %}
     <div class="form-group">
