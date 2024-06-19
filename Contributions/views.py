@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 def select_events(request):
     form = ContributeEventForm()
+    form.fields['events'].queryset = Event.objects.filter(association=request.user.member.logged_in_association, status='Active')
     return render(request, 'benevofy/select_events.html', {'form': form})
 
 

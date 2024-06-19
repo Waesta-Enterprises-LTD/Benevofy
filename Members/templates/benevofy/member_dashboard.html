@@ -5,6 +5,7 @@
 
 {% block content %}
 <div class="content-wrapper">
+  {% if user.member.current_mode == 'Admin' %}
   <div class="row">
     <div class="col-12 col-md-6 grid-margin">
       <div class="card">
@@ -27,6 +28,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
     <div class="row">
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
@@ -47,6 +49,7 @@
           </div>
         </div>
       </div>
+      {% if user.member.current_mode == 'Admin' %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -66,6 +69,8 @@
           </div>
         </div>
       </div>
+      {% endif %}
+      {% if user.member.current_mode == 'Admin' %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -85,6 +90,7 @@
           </div>
         </div>
       </div>
+      {% endif %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -151,6 +157,7 @@
         </div>
       </div>
     </div>
+    {% if user.member.current_mode == 'Admin' %}
     <div class="row ">
       <div class="col-12 grid-margin">
         <div class="card">
@@ -233,6 +240,7 @@
         </div>
       </div>
     </div>
+    {% endif %}
     <script>
       function copyToClipboard(elementId) {
         var aux = document.createElement("input");

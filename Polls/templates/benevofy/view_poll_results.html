@@ -1,0 +1,69 @@
+{% extends 'benevofy/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <h4 class="d-flex justify-content-between align-items-center mb-3">
+      {{ poll.title }} Polls Results
+      <small class="text-muted">{{ poll.created_at|date:"d M Y" }}</small>
+    </h4>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead>
+          {% if poll.poll_type == 'Electoral' %}
+          <tr>
+            <th>Candidate</th>
+            <th>Votes</th>
+          </tr>
+          {% else %}
+          <tr>
+            <th style="color: green"><i class="mdi mdi-check-circle-outline"></i> Yes</th>
+            <th style="color: red"><i class="mdi mdi-close-circle-outline"></i> No</th>
+            <th style="color: orange"><i class="mdi mdi-circle-slice-8"></i> Neutral</th>
+          </tr>
+          {% endif %}
+        </thead>
+        {% if poll.poll_type == 'Electoral' %}
+        <tbody>
+          {% for candidate in poll.candidates.all %}
+          <tr>
+            <td>
+                {% if not candidate.member.picture %}
+                    <img
+                      src="{% static 'images/'|add:candidate.member.gender|add:'.jpg' %}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 30px; border: 2px solid green; border-radius: 50%"
+                    />
+                  {% else %}
+                    <img
+                      src="{{ candidate.member.picture.url }}"
+                      alt="profile"
+                      class="rounded-circle img-fluid"
+                      style="max-width: 30px; border: 2px solid green; border-radius: 50%"
+                    />
+                  {% endif %}
+                {{ candidate.member.user.get_full_name  }}
+            </td>
+            <td>{{ candidate.votes.count }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% else %}
+        <tbody>
+          <tr>
+            <td>{{ yes }}</td>
+            <td>{{ no }}</td>
+            <td>{{ neutral }}</td>
+          </tr>
+        </tbody>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+

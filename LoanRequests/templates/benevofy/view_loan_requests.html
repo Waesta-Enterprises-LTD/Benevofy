@@ -45,8 +45,10 @@
                 <td>
                   {% if request.status == "pending" %}
                   <a href="" class="btn btn-outline-danger"><i class="mdi mdi-cancel"></i> Cancel</a>
+                  {% if user.member.current_mode == 'Admin' %}
                   <a href="{% url 'approve_loan_request' request.id %}" class="btn btn-outline-success"><i class="mdi mdi-check"></i> Approve</a>
                   <a href="" class="btn btn-outline-danger"><i class="mdi mdi-close"></i> Reject</a>
+                  {% endif %}
                   {% endif %}
                 </td>
               </tr>

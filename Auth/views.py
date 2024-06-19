@@ -9,6 +9,7 @@ from Members.models import Member
 from Associations.models import Association
 from uuid import uuid4
 
+
 def login_member(request):
     if request.user.is_authenticated:
         if request.GET.get('next'):
@@ -176,6 +177,23 @@ def register_member(request, registration_code):
             return render(request, 'benevofy/register_member.html', {'error': 'Passwords do not match', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
     else:
         return render(request, 'benevofy/register_member.html', {'registration_code': str(registration_code), 'association': association, 'expired': False})
+
+def switch_association(request, association_id):
+    association = Association.objects.get(id=association_id)
+    request.user.member.logged_in_association = association
+    request.user.member.save()
+    return redirect('member-dashboard')
+
+
+def switch_to_member(request):
+    request.user.member.current_mode = 'Member'
+    request.user.member.save()
+    return redirect('member-dashboard')
+
+def switch_to_admin(request):
+    request.user.member.current_mode = 'Admin'
+    request.user.member.save()
+    return redirect('member-dashboard')
 
 def logout_user(request):
     logout(request)

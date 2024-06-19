@@ -10,7 +10,7 @@
         <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
           Savings Table
           <a href="{% url 'save_money' %}" class="btn btn-outline-primary">
-            <i class="mdi mdi-plus"></i> Save Money
+            <i class="mdi mdi-plus"></i> Normal Save
           </a>
           <a href="{% url 'create_saving_target' %}" class="btn btn-outline-success">
             <i class="mdi mdi-plus"></i> Create Target
@@ -38,6 +38,7 @@
                 <th>Target</th>
                 <th>Amount Saved</th>
                 <th>Last Saved</th>
+                <th>Target Date</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -48,14 +49,16 @@
                 <td>{{ saving_target.target_name }}</td>
                 <td>{{ saving_target.amount_saved|intcomma }} UGX</td>
                 <td>{{ saving_target.last_saved_date|date:"SHORT_DATE_FORMAT" }}</td>
+                <td>{{ saving_target.target_date|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>
                   <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-currency-usd"></i> Savings</a>
+                  <a href="" class="btn btn-outline-success"><i class="mdi mdi-currency-usd"></i> Save</a>
                   <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="5" class="text-center">No savings found.</td>
+                <td colspan="6" class="text-center">No savings found.</td>
               </tr>
               {% endfor %}
             </tbody>

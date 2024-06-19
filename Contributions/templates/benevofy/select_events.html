@@ -7,7 +7,7 @@
     <form action="{% url 'pay_for_events' %}" method="post" style="padding: 10px;">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="btn btn-success">Select Event</button>
+      <button type="submit" class="btn btn-success"><i class="mdi mdi-cash-multiple"></i> Pay</button>
     </form>
   </div>
 </div>

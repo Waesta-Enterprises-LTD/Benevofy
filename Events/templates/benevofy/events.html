@@ -33,6 +33,7 @@
               <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Type</th>
                 <th>Minimum Contribution</th>
                 <th>Contributions</th>
                 <th>Status</th>
@@ -45,6 +46,7 @@
               <tr>
                 <td>{{ event.id }}</td>
                 <td>{{ event.name }}</td>
+                <td>{{ event.event_type }}</td>
                 <td>{{ event.minimum_contribution|intcomma }} UGX</td>
                 <td>{{ event.contributions.count }}</td>
                 <td>{{ event.status }}</td>
@@ -57,7 +59,7 @@
               </tr>
               {% empty %}
               <tr>
-                <td colspan="6" class="text-center">No events found.</td>
+                <td colspan="7" class="text-center">No events found.</td>
               </tr>
               {% endfor %}
             </tbody>

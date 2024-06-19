@@ -1,5 +1,12 @@
 from django.db import models
 
+
+event_types = (
+    ('Administrative', 'Administrative'),
+    ('Condolences', 'Condolences'),
+    ('Medical', 'Medical'),
+)
+
 class Event(models.Model):
     name = models.CharField(max_length=100)
     association = models.ForeignKey(
@@ -8,6 +15,7 @@ class Event(models.Model):
         null=True,
         related_name='events_associated',
     )
+    event_type = models.CharField(max_length=100, choices=event_types, null=True, blank=True)
     minimum_contribution = models.IntegerField(null=True, blank=True)
     contributions = models.ManyToManyField('Contributions.EventContribution', blank=True, related_name='event_contributions')
     closing_date = models.DateField(null=True, blank=True)

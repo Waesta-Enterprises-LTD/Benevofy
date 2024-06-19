@@ -140,6 +140,7 @@
               <span class="menu-title">Dashboard</span>
             </a>
           </li>
+          {% if user.member.current_mode == 'Admin' %}
           <li class="nav-item menu-items{% if request.path == '/Members/members/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'members' %}">
               <span class="menu-icon">
@@ -148,6 +149,18 @@
               <span class="menu-title">Members</span>
             </a>
           </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Admin' %}
+          <li class="nav-item menu-items{% if request.path == '/Administrators/view-administrators/' %} active{% endif %}">
+            <a class="nav-link" href="{% url 'administrators' %}">
+              <span class="menu-icon">
+                <i class="mdi mdi-account-star"></i>
+              </span>
+              <span class="menu-title">Administrators</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Admin' %}
           <li class="nav-item menu-items{% if request.path == '/Events/events/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'events' %}">
               <span class="menu-icon">
@@ -156,6 +169,7 @@
               <span class="menu-title">Events</span>
             </a>
           </li>
+          {% endif %}
           <li class="nav-item menu-items{% if request.path == '/Savings/view_savings/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_savings' %}">
               <span class="menu-icon">
@@ -212,6 +226,47 @@
               <li class="nav-item dropdown border-left">
                 <a
                   class="nav-link dropdown-toggle"
+                  id="memberDropdown"
+                  href="#"
+                  data-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                User Mode
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                  aria-labelledby="memberDropdown"
+                >
+                {% if user.member.current_mode == 'Admin' %}
+                  <a class="dropdown-item preview-item" href="{% url 'switch-to-member' %}">
+                    <div class="preview-thumbnail">
+                      <i class="mdi mdi-account-circle text-primary"></i>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject ellipsis mb-1">
+                        Switch to Member
+                      </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  {% else %}
+                  <a class="dropdown-item preview-item" href="{% url 'switch-to-admin' %}">
+                    <div class="preview-thumbnail">
+                      <i class="mdi mdi-shield-account"></i>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject ellipsis mb-1">
+                        Switch to Admin
+                      </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
+                  {% endif %}
+                </div>
+              </li>
+              <li class="nav-item dropdown border-left">
+                <a
+                  class="nav-link dropdown-toggle"
                   id="associationDropdown"
                   href="#"
                   data-toggle="dropdown"
@@ -224,12 +279,12 @@
                   aria-labelledby="associationDropdown"
                 >
                   {% for association in user.member.associations.all %}
-                  <a class="dropdown-item preview-item" href="">
+                  <a class="dropdown-item preview-item" href="{% url 'switch-association' association.id %}">
                     <div class="preview-thumbnail">
                       <img
                         src="{{ association.logo.url }}"
                         alt="image"
-                        class="rounded-circle profile-pic"
+                        class="rounded-circle profile-pic{% if association == user.member.logged_in_association %} border border-success{% endif %}"
                       />
                     </div>
                     <div class="preview-item-content">

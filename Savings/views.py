@@ -62,7 +62,7 @@ def create_saving_target(request):
     return render(request, 'benevofy/create_saving_target.html', {'form': form})
 
 def view_savings(request):
-    saving_targets = SavingTarget.objects.filter(Q(association=request.user.member.logged_in_association) | Q(user=request.user.member))
+    saving_targets = SavingTarget.objects.filter(user=request.user.member)
     return render(request, 'benevofy/view_savings.html', {'saving_targets': saving_targets})
 
 

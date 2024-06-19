@@ -52,6 +52,7 @@
                 <td>{{ loan.repayment_date }}</td>
                 <td>
                   <a href="{% url 'repay_loan' loan.id %}" class="btn btn-outline-primary"><i class="mdi mdi-cash"></i> Repay</a>
+                  <a href="{% url 'loan_payments' loan.id %}" class="btn btn-outline-success"><i class="mdi mdi-cash-multiple"></i> Payments</a>
                 </td>
               </tr>
               {% empty %}

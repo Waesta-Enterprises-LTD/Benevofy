@@ -8,9 +8,9 @@
     <div class="card">
       <div class="card-body">
         <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
-          Vote for {{ poll.title }}
+          Vote for ({{ poll.title }})
         </h4>
-
+        {% if poll.poll_type == 'Electoral' %}
         <div class="table-responsive">
           <table class="table table-striped">
             <thead>
@@ -59,6 +59,16 @@
             </tbody>
           </table>
         </div>
+        {% else %}
+        <h4>{{poll.constitution.title}}</h4>
+        <p>{{poll.constitution.content}}</p>
+        <form action="{% url 'vote_constitution' poll.id %}" method="post">
+          {% csrf_token %}
+          <button name="vote" type="submit" value="Yes" class="btn btn-outline-primary">Yes</button>
+          <button name="vote" type="submit" value="No" class="btn btn-outline-danger">No</button>
+          <button name="vote" type="submit" value="Neutral" class="btn btn-outline-secondary">Neutral</button>
+        </form>
+        {% endif %}
       </div>
     </div>
   </div>

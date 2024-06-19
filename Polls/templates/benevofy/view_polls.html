@@ -9,9 +9,11 @@
       <div class="card-body">
         <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
           Polls Table
+          {% if user.member.current_mode == 'Admin' %}
           <a href="{% url 'create-poll' %}" class="btn btn-outline-primary">
             <i class="mdi mdi-plus"></i> Create Poll
           </a>
+          {% endif %}
         </h4>
 
         <div class="row mb-3">
@@ -33,7 +35,12 @@
               <tr>
                 <th>ID</th>
                 <th>Title</th>
+                <th>Type</th>
+                {% if poll.poll_type == 'Electoral' %}
                 <th>Candidates</th>
+                {% else %}
+                <th>Options</th>
+                {% endif %}
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -43,7 +50,12 @@
               <tr>
                 <td>{{ poll.id }}</td>
                 <td>{{ poll.title }}</td>
+                <td>{{ poll.poll_type }}</td>
+                {% if poll.poll_type == 'Electoral' %}
                 <td>{{ poll.candidates.count }}</td>
+                {% else %}
+                <td>3</td>
+                {% endif %}
                 <td>
                   <div class="badge badge-outline-{{ poll.status_color }}">{{ poll.status }}</div>
                 </td>
@@ -51,14 +63,24 @@
                   {% if request.user.member not in poll.voters.all %}
                   <a href="{% url 'vote' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-vote"></i> Vote</a>
                   {% endif %}
+                  {% if user.member.current_mode == 'Admin' %}
+                  {% if poll.poll_type == 'Electoral' %}
                   <a href="{% url 'add_candidate' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-account-plus"></i> Add Candidate</a>
+                  {% else %}
+                  {% if not poll.constitution %}
+                  <a href="{% url 'write_constitution' poll.id %}" class="btn btn-outline-success"><i class="mdi mdi-pencil"></i> Write Constitution</a>
+                  {% endif %}
+                  {% endif %}
+                  {% endif %}
+                  {% if user.member.current_mode == 'Admin' %}
                   <a href="{% url 'delete-poll' poll.id %}" class="btn btn-outline-danger">Delete</a>
-                  <a href="" class="btn btn-outline-primary"><i class="mdi mdi-chart-bar"></i> Results</a>
+                  {% endif %}
+                  <a href="{% url 'view_poll_results' poll.id %}" class="btn btn-outline-primary"><i class="mdi mdi-chart-bar"></i> Results</a>
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="5" class="text-center">No polls found.</td>
+                <td colspan="6" class="text-center">No polls found.</td>
               </tr>
               {% endfor %}
             </tbody>

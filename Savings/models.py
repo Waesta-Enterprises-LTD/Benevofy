@@ -18,6 +18,7 @@ class SavingTarget(models.Model):
     target_name = models.CharField(max_length=100)
     association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey('Members.Member', on_delete=models.CASCADE)
+    target_date = models.DateField(null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     savings = models.ManyToManyField('Savings.Saving', blank=True)
     progress = models.DecimalField(max_digits=10, decimal_places=2, default=0)

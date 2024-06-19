@@ -50,3 +50,7 @@ def repay_loan(request, loan_id):
             return redirect('payment_initiated')
     form.fields['loan'].disabled = True
     return render(request, 'benevofy/repay_loan.html', {'loan': loan, 'form': form})
+
+
+def loan_payments(request, loan_id):
+    return render(request, 'benevofy/loan_payments.html')

@@ -8,6 +8,7 @@
       <div class="card">
         <div class="card-body text-center">
           <div class="mb-4" style="font-size: 50;">
+            {% if poll.poll_type == 'Electoral' %}
             {% if not candidate.member.picture %}
                     <img
                       src="{% static 'images/'|add:candidate.member.user.member.gender|add:'.jpg' %}"
@@ -23,8 +24,15 @@
                       style="max-width: 100px"
                     />
                   {% endif %}
+            {% endif %}
+            {% if poll.poll_type == 'Electoral' %}
           <h5 class="card-title">{{ candidate.name }}</h5>
+          {% endif %}
+          {% if poll.poll_type == 'Electoral' %}
           <h5 class="card-title">Thank you for voting {{ candidate.member.user.get_full_name }} for {{ poll.title }}</h5>
+          {% else %}
+          <h5 class="card-title">Thank you for voting on {{ constitution.title }}</h5>
+          {% endif %}
           <p class="card-text">Your vote has been successfully recorded. <span id="countdown"></span></p>
           <script>
             var countdown = 10;

@@ -18,9 +18,20 @@ class SavingTargetForm(forms.ModelForm):
             }
         )
     )
+
+    target_date = forms.DateField(
+        widget=forms.DateInput(
+            attrs={
+                'class': 'form-control mb-3',
+                'placeholder': 'Target date',
+                'type': 'date'
+            }
+        )
+    )
+
     class Meta:
         model = SavingTarget
-        fields = ['target_name', 'amount']
+        fields = ['target_name', 'amount', 'target_date']
 
 
 class SavingForm(forms.ModelForm):
