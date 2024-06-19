@@ -60,6 +60,9 @@
                 <td>
                   <a href="{% url 'member-profile' member.id %}" class="btn btn-outline-primary">Profile</a>
                   <button class="btn btn-outline-warning">Suspend</button>
+                  {% if member not in user.member.logged_in_association.admins.all and user.member.current_mode == 'Admin' %}
+                  <a href="{% url 'assign-admin' member.id %}" class="btn btn-outline-success">Make Admin</a>
+                  {% endif %}
                 </td>
                 <td>
                   <div class="badge badge-outline-{{ member.payment_status_color }}">{{ member.payment_status }}</div>

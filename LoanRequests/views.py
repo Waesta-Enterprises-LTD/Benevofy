@@ -6,6 +6,7 @@ from Loans.models import Loan
 def request_loan(request):
     member = request.user.member
     form = LoanRequestForm()
+    form.fields['guarantors'].queryset = member.logged_in_association.members.all()
     if request.method == 'POST':
         form = LoanRequestForm(request.POST)
         if form.is_valid():

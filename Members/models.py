@@ -1,8 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Member(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    biodata = models.OneToOneField(
+        'Biodata.Biodata',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='member_biodata'
+    )
     email_verified = models.BooleanField(default=False)
     verification_code = models.CharField(max_length=500, null=True, blank=True)
     current_mode = models.CharField(max_length=10, choices=[("Member", "Member"), ("Admin", "Admin")], default="Member")
@@ -23,8 +32,6 @@ class Member(models.Model):
         for savings in self.savings.filter(status='Paid'):
             total += savings.amount
         return total
-
-
 
 
 

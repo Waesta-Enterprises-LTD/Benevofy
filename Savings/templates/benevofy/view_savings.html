@@ -9,7 +9,7 @@
       <div class="card-body">
         <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
           Savings Table
-          <a href="{% url 'save_money' %}" class="btn btn-outline-primary">
+          <a href="{% url 'normal_saving' %}" class="btn btn-outline-primary">
             <i class="mdi mdi-plus"></i> Normal Save
           </a>
           <a href="{% url 'create_saving_target' %}" class="btn btn-outline-success">
@@ -52,7 +52,7 @@
                 <td>{{ saving_target.target_date|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>
                   <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-currency-usd"></i> Savings</a>
-                  <a href="" class="btn btn-outline-success"><i class="mdi mdi-currency-usd"></i> Save</a>
+                  <a href="{% url 'save_money' saving_target.id %}" class="btn btn-outline-success"><i class="mdi mdi-currency-usd"></i> Save</a>
                   <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
                 </td>
               </tr>

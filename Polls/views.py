@@ -18,7 +18,7 @@ def create_poll(request):
 def add_candidate(request, poll_id):
     poll = Poll.objects.get(pk=poll_id)
     form = CandidateForm()
-    members = Member.objects.exclude(id__in=poll.candidates.all().values_list('id', flat=True))
+    members = Member.objects.exclude(id__in=poll.candidates.all().values_list('id', flat=True), associations=request.user.member.logged_in_association)
     form = CandidateForm()
     form.fields['member'].queryset = members
     if request.method == 'POST':

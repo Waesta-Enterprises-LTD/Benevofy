@@ -1,16 +1,16 @@
 from django.shortcuts import render, redirect
 from .models import Saving, SavingTarget
-from .forms import SavingTargetForm, SavingForm
+from .forms import SavingTargetForm, SavingForm, NormalSavingForm
 from django.db.models import Q
 from uuid import uuid4
 import requests
 
 
-def save_money(request):
+def save_money(request, target_id):
     member = request.user.member
-    form = SavingForm()
-    if member:
-        form.fields['target'].queryset = SavingTarget.objects.filter(Q(association=member.logged_in_association) | Q(user=member))
+    target = SavingTarget.objects.get(id=target_id)
+    form = SavingForm(initial={'target': target})
+    form.fields['target'].widget.attrs['disabled'] = True
     if request.method == 'POST':
         form = SavingForm(request.POST)
         reference = str(uuid4())
@@ -18,8 +18,10 @@ def save_money(request):
             form.instance.association = member.logged_in_association
             form.instance.user = member
             form.instance.reference = reference
+            form.instance.target = target
             saving = form.save()
-        target = form.cleaned_data['target']
+        else:
+            print(form.errors)
         target.savings.add(saving)
         member.savings.add(saving)
         phone = request.POST.get('phone')
@@ -70,4 +72,10 @@ def view_target_savings(request, target_id):
     target = SavingTarget.objects.get(pk=target_id)
     savings = target.savings.all()
     return render(request, 'benevofy/view_target_savings.html', {'target': target, 'savings': savings})
+
+
+def normal_saving(request):
+    form = NormalSavingForm()
+    form.fields['amount'].widget.attrs['min'] = request.user.member.logged_in_association.minimum_monthly_savings
+    return render(request, 'benevofy/normal_saving.html', {'form': form})
 

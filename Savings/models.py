@@ -3,7 +3,7 @@ from django.db import models
 class Saving(models.Model):
     association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True)
     user = models.ForeignKey('Members.Member', on_delete=models.CASCADE)
-    target = models.ForeignKey('Savings.SavingTarget', on_delete=models.SET_NULL, null=True)
+    target = models.ForeignKey('Savings.SavingTarget', on_delete=models.SET_NULL, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Paid', 'Paid')], default='Pending')
     reference = models.CharField(max_length=500, null=True, blank=True)
@@ -35,3 +35,16 @@ class SavingTarget(models.Model):
             return self.savings.first().created_at
         except:
             return None
+
+
+
+class NormalSaving(models.Model):
+    association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True)
+    member = models.ForeignKey('Members.Member', on_delete=models.CASCADE)
+    date = models.DateField()
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    reference = models.CharField(max_length=500, null=True, blank=True)
+    status = models.CharField(max_length=20, choices=[('Pending', 'Pending'), ('Paid', 'Paid')], default='Pending')
+
+    def __str__(self):
+        return f"{self.member} - {self.amount}"

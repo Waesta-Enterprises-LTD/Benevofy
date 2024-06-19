@@ -1,5 +1,5 @@
 from django import forms
-from .models import SavingTarget, Saving
+from .models import SavingTarget, Saving, NormalSaving
 
 class SavingTargetForm(forms.ModelForm):
     target_name = forms.CharField(
@@ -50,9 +50,25 @@ class SavingForm(forms.ModelForm):
             attrs={
                 'class': 'form-control mb-3'
             }
-        )
+        ),
+        required=False
     )
     
     class Meta:
         model = Saving
         fields = ['amount', 'target']
+
+
+class NormalSavingForm(forms.ModelForm):
+    amount = forms.DecimalField(
+        widget=forms.NumberInput(
+            attrs={
+                'class': 'form-control mb-3',
+                'placeholder': 'Amount'
+            }
+        )
+    )
+
+    class Meta:
+        model = NormalSaving
+        fields = ['amount']

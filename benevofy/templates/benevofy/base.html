@@ -186,14 +186,6 @@
               <span class="menu-title">Loans</span>
             </a>
           </li>
-          <li class="nav-item menu-items">
-            <a class="nav-link" href="">
-              <span class="menu-icon">
-                <i class="mdi mdi-chart-bar"></i>
-              </span>
-              <span class="menu-title">Reports</span>
-            </a>
-          </li>
           <li class="nav-item menu-items{% if request.path == '/Polls/view_polls/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'polls' %}">
               <span class="menu-icon">
@@ -223,6 +215,7 @@
               <span class="mdi mdi-menu"></span>
             </button>
             <ul class="navbar-nav navbar-nav-right">
+              {% if user.member in user.member.logged_in_association.admins.all %}
               <li class="nav-item dropdown border-left">
                 <a
                   class="nav-link dropdown-toggle"
@@ -264,6 +257,7 @@
                   {% endif %}
                 </div>
               </li>
+              {% endif %}
               <li class="nav-item dropdown border-left">
                 <a
                   class="nav-link dropdown-toggle"
@@ -344,6 +338,17 @@
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
+                  <a class="dropdown-item preview-item" href="{% url 'biodata' %}">
+                    <div class="preview-thumbnail">
+                      <div class="preview-icon bg-dark rounded-circle">
+                        <i class="mdi mdi-account text-warning"></i>
+                      </div>
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject mb-1">Biodata</p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
                   <a
                     class="dropdown-item preview-item"
                     href="{% url 'logout' %}"
@@ -358,7 +363,6 @@
                     </div>
                   </a>
                   <div class="dropdown-divider"></div>
-                  <p class="p-3 mb-0 text-center">Advanced settings</p>
                 </div>
               </li>
             </ul>

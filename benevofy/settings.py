@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     'Polls',
     'Savings',
     'whitenoise.runserver_nostatic',
+    'Biodata',
 ]
 
 MIDDLEWARE = [
