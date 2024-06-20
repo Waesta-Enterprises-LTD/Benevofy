@@ -52,6 +52,7 @@ def save_money(request, target_id):
         if response['success']:
             return redirect('payment_initiated')
         else:
+            saving.delete()
             form = SavingForm(initial={'target': target})
             form.fields['target'].widget.attrs['disabled'] = True
             return render(request, 'benevofy/save_money.html', {'member': member, 'error': 'Failed to initiate payment. Please contact support.', 'form': form})
@@ -64,7 +65,7 @@ def create_saving_target(request):
         if form.is_valid():
             form.instance.user = request.user.member
             form.save()
-            return redirect('view_savings')
+            return redirect('save_money', target_id=form.instance.id)
     else:
         form = SavingTargetForm()
     return render(request, 'benevofy/create_saving_target.html', {'form': form})
@@ -86,8 +87,8 @@ def normal_saving(request):
     if request.method == 'POST':
         phone = request.POST.get('phone')   
         form = NormalSavingForm(request.POST)
-        amount = form.cleaned_data['amount']
         if form.is_valid():
+            amount = form.cleaned_data['amount']
             reference = str(uuid4())
             form.instance.association = request.user.member.logged_in_association
             form.instance.member = request.user.member
@@ -113,14 +114,19 @@ def normal_saving(request):
             "msisdn": '+'+phone,
             "currency": currency,
             "amount": int(amount),
-            "description": f"{target.target_name} Savings"
+            "description": f"Normal Savings"
         }
         response = requests.request("POST", url, headers=headers, json=payload)
         response = response.json()
         if response['success']:
             return redirect('payment_initiated')
         else:
-            
-            return render(request, 'benevofy/normal_saving.html', {'form': form})
+            saving.delete()
+            return render(request, 'benevofy/normal_saving.html', {'form': form, 'error': 'Failed to initiate payment. Please contact support.'})
     return render(request, 'benevofy/normal_saving.html', {'form': form})
 
+
+def delete_target(request, target_id):
+    target = SavingTarget.objects.get(pk=target_id)
+    target.delete()
+    return redirect('view_savings')

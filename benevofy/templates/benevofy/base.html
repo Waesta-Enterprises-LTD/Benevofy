@@ -62,28 +62,22 @@
             <div class="profile-desc">
               <div class="profile-pic">
                 <div class="count-indicator">
-                  {% if not user.member.picture %}
                   <img
                     class="img-xs rounded-circle"
-                    src="{% static 'images/'|add:user.member.gender|add:'.jpg' %}"
+                    src="{{ user.member.logged_in_association.logo.url }}"
                     alt=""
                   />
-                  {% else %}
-                  <img
-                    class="img-xs rounded-circle"
-                    src="{{ user.member.picture.url }}"
-                    alt=""
-                  />
-                  {% endif %}
                   <span class="count bg-success"></span>
                 </div>
                 <div class="profile-name">
                   <h5 class="mb-0 font-weight-normal">
-                    {{ user.get_full_name }}
+                    {{ user.member.logged_in_association.name|truncatechars:15 }}
                   </h5>
+                  {% if user.member.logged_in_association.email %}
                   <span title="{{ user.email }}"
-                    >{{ user.email|truncatechars:15 }}</span
+                    >{{ user.member.logged_in_association.email|truncatechars:15 }}</span
                   >
+                  {% endif %}
                 </div>
               </div>
               <a href="" id="profile-dropdown" data-toggle="dropdown"
@@ -276,7 +270,7 @@
                   data-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {{ user.member.association.name }}
+                  {{ user.member.logged_in_association.name }}
                 </a>
                 <div
                   class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"

@@ -7,6 +7,7 @@ class LoanRequest(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     guarantors = models.ManyToManyField('Members.Member', related_name='loan_request_guarantors', blank=True)
     approved_guarantors = models.ManyToManyField('Members.Member', related_name='loan_request_approved_guarantors', blank=True)
+    reference = models.CharField(max_length=500, null=True, blank=True)
     applied_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     status = models.CharField(max_length=50, default='waiting for guarantors', choices=[
         ('pending', 'Pending'),

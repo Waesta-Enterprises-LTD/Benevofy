@@ -53,7 +53,9 @@
                 <td>
                   <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-chart-bar"></i> Report</a>
                   <a href="{% url 'save_money' saving_target.id %}" class="btn btn-outline-success"><i class="mdi mdi-currency-usd"></i> Save</a>
-                  <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
+                  {% if saving_target.amount_saved == 0 %}
+                  <a href="{% url 'delete_target' saving_target.id %}" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
+                  {% endif %}
                 </td>
               </tr>
               {% empty %}

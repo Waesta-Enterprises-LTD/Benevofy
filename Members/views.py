@@ -47,7 +47,11 @@ def member_dashboard(request):
     
     # Convert the Plotly figure to JSON
     html_content = pio.to_html(fig, full_html=False)
-    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content})
+    association = request.user.member.logged_in_association
+    participated_events_last_10 = association.events.filter(contributions__user=request.user.member).order_by('-created_at')[:10].count()
+    last_10 = (participated_events_last_10 / association.events.all().count()) * 100
+    overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
+    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation})
 
 
 def profile(request):

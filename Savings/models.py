@@ -42,6 +42,7 @@ class SavingTarget(models.Model):
 class NormalSaving(models.Model):
     association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey('Members.Member', on_delete=models.CASCADE)
+    target = models.CharField(max_length=100, null=True, blank=True, default="Monthly Savings")
     date = models.DateField(default=timezone.now)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=500, null=True, blank=True)

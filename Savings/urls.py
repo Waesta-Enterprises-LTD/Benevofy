@@ -7,4 +7,5 @@ urlpatterns = [
     path('view_savings/', views.view_savings, name='view_savings'),
     path('<int:target_id>/savings/', views.view_target_savings, name='view_target_savings'),
     path('normal_saving/', views.normal_saving, name='normal_saving'),
+    path('delete_target/<int:target_id>/', views.delete_target, name='delete_target'),
 ]

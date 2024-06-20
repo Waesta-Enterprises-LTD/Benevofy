@@ -163,6 +163,7 @@ def register_member(request, registration_code):
                 member.save()
                 association.registration_code = uuid4()
                 association.save()
+                association.members.add(member)
                 subject = 'Benevofy Email Verification'
                 message = render_to_string('benevofy/verification_email.html', {
                     'user': user,
