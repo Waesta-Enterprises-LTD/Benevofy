@@ -1,0 +1,14 @@
+{% extends 'benevofy/base.html' %} 
+
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <h3 class="card-title">Edit Biodata</h3>
+    <form method="post" style="padding: 10px;">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-success">Submit Biodata</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -22,6 +22,7 @@ class Member(models.Model):
     logged_in_association = models.ForeignKey('Associations.Association', on_delete=models.SET_NULL, null=True, blank=True, related_name='member_logged_in')
     phone = models.CharField(max_length=20)
     gender = models.CharField(max_length=10, choices=[("Male", "Male"), ("Female", "Female")], null=True, blank=True)
+    declaration = models.TextField(max_length=1000 ,null=True, blank=True)
     is_admin = models.BooleanField(default=False)
 
     def __str__(self):

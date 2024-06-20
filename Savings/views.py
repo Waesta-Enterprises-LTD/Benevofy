@@ -12,7 +12,8 @@ def save_money(request, target_id):
     form = SavingForm(initial={'target': target})
     form.fields['target'].widget.attrs['disabled'] = True
     if request.method == 'POST':
-        form = SavingForm(request.POST)
+        form = SavingForm(request.POST, initial={'target': target})
+        form.fields['target'].widget.attrs['disabled'] = True
         reference = str(uuid4())
         if form.is_valid():
             form.instance.association = member.logged_in_association
@@ -47,8 +48,13 @@ def save_money(request, target_id):
             "description": f"{target.target_name} Savings"
         }
         response = requests.request("POST", url, headers=headers, json=payload)
-        print(response.json())
-        return redirect('payment_initiated')
+        response = response.json()
+        if response['success']:
+            return redirect('payment_initiated')
+        else:
+            form = SavingForm(initial={'target': target})
+            form.fields['target'].widget.attrs['disabled'] = True
+            return render(request, 'benevofy/save_money.html', {'member': member, 'error': 'Failed to initiate payment. Please contact support.', 'form': form})
     return render(request, 'benevofy/save_money.html', {'member': member, 'form': form})
 
 
@@ -77,5 +83,44 @@ def view_target_savings(request, target_id):
 def normal_saving(request):
     form = NormalSavingForm()
     form.fields['amount'].widget.attrs['min'] = request.user.member.logged_in_association.minimum_monthly_savings
+    if request.method == 'POST':
+        phone = request.POST.get('phone')   
+        form = NormalSavingForm(request.POST)
+        amount = form.cleaned_data['amount']
+        if form.is_valid():
+            reference = str(uuid4())
+            form.instance.association = request.user.member.logged_in_association
+            form.instance.member = request.user.member
+            form.instance.reference = reference
+            saving = form.save()
+            request.user.member.logged_in_association.savings.add(saving)
+        phone = request.POST.get('phone')
+        if phone.startswith('256'):
+            currency = 'UGX'
+        elif phone.startswith('254'):
+            currency = 'KES'
+        else:
+            return render(request, 'benevofy/save_money.html', {'member': request.user.member, 'error': 'Invalid phone number. The number should have a country code.', 'form': form})
+        url = "https://payments.relworx.com/api/mobile-money/request-payment"
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/vnd.relworx.v2",
+            "Authorization": "Bearer ec719b1a0db84d.YNrIn4iWVanw1Y0ptYvrVA"
+        }
+        payload = {
+            "account_no": request.user.member.logged_in_association.rel_account,
+            "reference": reference,
+            "msisdn": '+'+phone,
+            "currency": currency,
+            "amount": int(amount),
+            "description": f"{target.target_name} Savings"
+        }
+        response = requests.request("POST", url, headers=headers, json=payload)
+        response = response.json()
+        if response['success']:
+            return redirect('payment_initiated')
+        else:
+            
+            return render(request, 'benevofy/normal_saving.html', {'form': form})
     return render(request, 'benevofy/normal_saving.html', {'form': form})
 

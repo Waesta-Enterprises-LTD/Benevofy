@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Biodata, Dependent
 
-# Register your models here.
+admin.site.register(Biodata)
+admin.site.register(Dependent)
+

@@ -3,30 +3,27 @@
   <div class="row">
     <div class="col-md-4 grid-margin stretch-card">
       <div class="card">
-        <div class="card-body">
-          <div class="d-flex flex-column align-items-center text-center">
-            {% if not member.picture %}
-              <img
-                src="{% static 'images/'|add:member.gender|add:'.jpg' %}"
-                alt="profile"
-                class="rounded-circle img-fluid"
-              />
-            {% else %}
-              <img
-                src="{{ member.picture.url }}"
-                alt="profile"
-                class="rounded-circle img-fluid"
-              />
-            {% endif %}
-            <div class="mt-3">
-              <h4>{{ member.user.get_full_name }}</h4>
-              <p class="text-secondary mb-1">{{ member.created_at }}</p>
-              <p class="text-muted font-weight-light">
-                {{ member.phone }}
-              </p>
-              <p class="text-muted font-weight-light">{{ member.user.email }}</p>
-            </div>
-          </div>
+        <div class="card-body text-center">
+          {% if not member.picture %}
+            <img
+              src="{% static 'images/'|add:member.gender|add:'.jpg' %}"
+              alt="profile"
+              class="rounded-circle img-fluid"
+            />
+          {% else %}
+            <img
+              src="{{ member.picture.url }}"
+              alt="profile"
+              class="rounded-circle img-fluid"
+            />
+          {% endif %}
+          <h4 class="mb-0">{{ member.user.get_full_name }}</h4>
+          <p class="text-secondary mb-1">{{ member.created_at }}</p>
+          <p class="text-muted font-weight-light">{{ member.phone }}</p>
+          <p class="text-muted font-weight-light">{{ member.user.email }}</p>
+          <a href="{% url 'member_dependents' member.id %}" class="btn btn-outline-success">
+            <i class="mdi mdi-account-multiple"></i> Dependents
+          </a>
         </div>
       </div>
     </div>
@@ -34,19 +31,33 @@
       <div class="card">
         <div class="card-body">
           <h4 class="card-title mb-0">Profile Details</h4>
-          <hr />
+          <hr class="mb-0" />
           <div class="row">
             <div class="col-sm-6">
-              <p class="mb-2"><strong>Phone:</strong> {{ member.phone }}</p>
-              <p class="mb-2"><strong>Email:</strong> {{ member.user.email }}</p>
-              <p class="mb-2"><strong>Contributions:</strong> {{ member.contributions.count }}</p>
-
+              <ul class="list-unstyled">
+                <li><strong>Phone:</strong> {{ member.phone }}</li>
+                <li><strong>Email:</strong> {{ member.user.email }}</li>
+                <li><strong>Contributions:</strong> {{ member.contributions.count }}</li>
+                <li><strong>Company or Business:</strong> {{ member.biodata.company_or_business }}</li>
+                <li><strong>Work Address:</strong> {{ member.biodata.work_address }}</li>
+                <li><strong>Job Title:</strong> {{ member.biodata.job_title }}</li>
+                <li><strong>Work Contact:</strong> {{ member.biodata.work_contact }}</li>
+                <li><strong>Employment Status:</strong> {{ member.biodata.employment_status }}</li>
+                <li><strong>Next of Kin Contact:</strong> {{ member.biodata.next_of_kin_contact }}</li>
+              </ul>
             </div>
             <div class="col-sm-6">
-              <p class="mb-2"><strong>Joined:</strong> {{ member.user.date_joined|date:"d F Y" }}</p>
-              <p class="mb-2"><strong>Gender:</strong> {{ member.gender }}</p>
-              <p class="mb-2"><strong>Last Login:</strong> {{ member.user.last_login|date:"d F Y" }}</p>
-
+              <ul class="list-unstyled">
+                <li><strong>Joined:</strong> {{ date_joined|date:"d F Y" }}</li>
+                <li><strong>Gender:</strong> {{ member.gender }}</li>
+                <li><strong>Last Login:</strong> {{ last_login|date:"d F Y" }}</li>
+                <li><strong>Biodata:</strong></li>
+                <li><strong>Address:</strong> {{ member.biodata.address }}</li>
+                <li><strong>Marital Status:</strong> {{ member.biodata.marital_status }}</li>
+                <li><strong>Nationality:</strong> {{ member.biodata.nationality }}</li>
+                <li><strong>Next of Kin:</strong> {{ member.biodata.next_of_kin }}</li>
+                <li><strong>Next of Kin Address:</strong> {{ member.biodata.next_of_kin_address }}</li>
+              </ul>
             </div>
           </div>
         </div>

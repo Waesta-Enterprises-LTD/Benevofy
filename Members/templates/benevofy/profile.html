@@ -25,6 +25,12 @@
                 {{ user.member.phone }}
               </p>
               <p class="text-muted font-weight-light">{{ user.email }}</p>
+              <a href="{% url 'add_biodata' %}" class="btn btn-outline-primary">
+                <i class="mdi mdi-pencil"></i> Edit Biodata
+              </a>
+              <a href="{% url 'view_dependents' %}" class="btn btn-outline-success">
+                <i class="mdi mdi-account-multiple"></i> Dependents
+              </a>
             </div>
           </div>
         </div>
@@ -40,13 +46,24 @@
               <p class="mb-2"><strong>Phone:</strong> {{ user.member.phone }}</p>
               <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
               <p class="mb-2"><strong>Contributions:</strong> {{ user.member.contributions.count }}</p>
+              <p class="mb-2"><strong>Company or Business:</strong> {{ user.member.biodata.company_or_business }}</p>
+              <p class="mb-2"><strong>Work Address:</strong> {{ user.member.biodata.work_address }}</p>
+              <p class="mb-2"><strong>Job Title:</strong> {{ user.member.biodata.job_title }}</p>
+              <p class="mb-2"><strong>Work Contact:</strong> {{ user.member.biodata.work_contact }}</p>
+              <p class="mb-2"><strong>Employment Status:</strong> {{ user.member.biodata.employment_status }}</p>
+              <p class="mb-2"><strong>Next of Kin Contact:</strong> {{ user.member.biodata.next_of_kin_contact }}</p>
 
             </div>
             <div class="col-sm-6">
               <p class="mb-2"><strong>Joined:</strong> {{ user.date_joined|date:"d F Y" }}</p>
               <p class="mb-2"><strong>Gender:</strong> {{ user.member.gender }}</p>
               <p class="mb-2"><strong>Last Login:</strong> {{ user.last_login|date:"d F Y" }}</p>
-
+              <p class="mb-2"><strong>Biodata:</strong></p>
+              <p class="mb-2"><strong>Address:</strong> {{ user.member.biodata.address }}</p>
+              <p class="mb-2"><strong>Marital Status:</strong> {{ user.member.biodata.marital_status }}</p>
+              <p class="mb-2"><strong>Nationality:</strong> {{ user.member.biodata.nationality }}</p>
+              <p class="mb-2"><strong>Next of Kin:</strong> {{ user.member.biodata.next_of_kin }}</p>
+              <p class="mb-2"><strong>Next of Kin Address:</strong> {{ user.member.biodata.next_of_kin_address }}</p>
             </div>
           </div>
         </div>
@@ -55,4 +72,5 @@
   </div>
 </div>
 {% endblock %}
+
 

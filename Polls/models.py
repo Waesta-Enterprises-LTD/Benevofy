@@ -18,6 +18,7 @@ class Poll(models.Model):
 
 
 class Candidate(models.Model):
+    poll = models.ForeignKey('Polls.Poll', on_delete=models.SET_NULL, null=True)
     member = models.ForeignKey('Members.Member', on_delete=models.CASCADE)
     votes = models.ManyToManyField('Members.Member', related_name='votes')
 
