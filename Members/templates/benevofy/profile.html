@@ -19,12 +19,6 @@
               />
             {% endif %}
             <div class="mt-3">
-              <h4>{{ user.get_full_name }}</h4>
-              <p class="text-secondary mb-1">{{ user.member.created_at }}</p>
-              <p class="text-muted font-weight-light">
-                {{ user.member.phone }}
-              </p>
-              <p class="text-muted font-weight-light">{{ user.email }}</p>
               <a href="{% url 'add_biodata' %}" class="btn btn-outline-primary">
                 <i class="mdi mdi-pencil"></i> Edit Biodata
               </a>
@@ -39,31 +33,30 @@
     <div class="col-md-8 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <h4 class="card-title mb-0">Profile Details</h4>
+          <h4 class="card-title mb-0">Personal Details</h4>
           <hr />
           <div class="row">
             <div class="col-sm-6">
-              <p class="mb-2"><strong>Phone:</strong> {{ user.member.phone }}</p>
-              <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
-              <p class="mb-2"><strong>Contributions:</strong> {{ user.member.contributions.count }}</p>
-              <p class="mb-2"><strong>Company or Business:</strong> {{ user.member.biodata.company_or_business }}</p>
-              <p class="mb-2"><strong>Work Address:</strong> {{ user.member.biodata.work_address }}</p>
-              <p class="mb-2"><strong>Job Title:</strong> {{ user.member.biodata.job_title }}</p>
-              <p class="mb-2"><strong>Work Contact:</strong> {{ user.member.biodata.work_contact }}</p>
-              <p class="mb-2"><strong>Employment Status:</strong> {{ user.member.biodata.employment_status }}</p>
-              <p class="mb-2"><strong>Next of Kin Contact:</strong> {{ user.member.biodata.next_of_kin_contact }}</p>
-
-            </div>
-            <div class="col-sm-6">
-              <p class="mb-2"><strong>Joined:</strong> {{ user.date_joined|date:"d F Y" }}</p>
+              <p class="mb-2"><strong>System ID:</strong> {{ user.id }}</p>
+              <p class="mb-2"><strong>Name:</strong> {{ user.get_full_name }}</p>
+              <p class="mb-2"><strong>Date of Birth:</strong> {{ user.member.biodata.date_of_birth }}</p>  
               <p class="mb-2"><strong>Gender:</strong> {{ user.member.gender }}</p>
-              <p class="mb-2"><strong>Last Login:</strong> {{ user.last_login|date:"d F Y" }}</p>
-              <p class="mb-2"><strong>Biodata:</strong></p>
-              <p class="mb-2"><strong>Address:</strong> {{ user.member.biodata.address }}</p>
               <p class="mb-2"><strong>Marital Status:</strong> {{ user.member.biodata.marital_status }}</p>
               <p class="mb-2"><strong>Nationality:</strong> {{ user.member.biodata.nationality }}</p>
+              <p class="mb-2"><strong>Mobile Number:</strong> {{ user.member.phone }}</p>
+              <p class="mb-2"><strong>Email:</strong> {{ user.email }}</p>
+              <p class="mb-2"><strong>Address:</strong> {{ user.member.biodata.address }}</p>
+              <p class="mb-2"><strong>Joined:</strong> {{ user.date_joined|date:"d F Y" }}</p>
+            </div>
+            <div class="col-sm-6">
+              <p class="mb-2"><strong>Employment Status:</strong> {{ user.member.biodata.employment_status }}</p> 
+              <p class="mb-2"><strong>Company or Business:</strong> {{ user.member.biodata.company_or_business }}</p>
+              <p class="mb-2"><strong>Job Title:</strong> {{ user.member.biodata.job_title }}</p>
+              <p class="mb-2"><strong>Work Address:</strong> {{ user.member.biodata.work_address }}</p>
+              <p class="mb-2"><strong>Work Contact:</strong> {{ user.member.biodata.work_contact }}</p>
               <p class="mb-2"><strong>Next of Kin:</strong> {{ user.member.biodata.next_of_kin }}</p>
               <p class="mb-2"><strong>Next of Kin Address:</strong> {{ user.member.biodata.next_of_kin_address }}</p>
+              <p class="mb-2"><strong>Next of Kin Contact:</strong> {{ user.member.biodata.next_of_kin_contact }}</p>
             </div>
           </div>
         </div>

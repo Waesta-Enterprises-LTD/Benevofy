@@ -2,6 +2,7 @@ from django.db import models
 
 class Biodata(models.Model):
     member = models.OneToOneField('Members.Member', on_delete=models.CASCADE, related_name='biodata_member')
+    date_of_birth = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=100, null=True, blank=True)
     dependents = models.ManyToManyField('Dependent', related_name='biodata_dependents', blank=True)
     marital_status = models.CharField(max_length=100, choices=[('Single', 'Single'), ('Married', 'Married'), ('Divorced', 'Divorced')], null=True, blank=True)
@@ -10,7 +11,7 @@ class Biodata(models.Model):
     work_address = models.CharField(max_length=100, null=True, blank=True)
     job_title = models.CharField(max_length=100, null=True, blank=True)
     work_contact = models.CharField(max_length=100, null=True, blank=True)
-    employment_status = models.CharField(max_length=100, choices=[('Employed', 'Employed'), ('Unemployed', 'Unemployed'), ('Employer', 'Employer')], null=True, blank=True)
+    employment_status = models.CharField(max_length=100, choices=[('Employed', 'Employed'), ('Unemployed', 'Unemployed'), ('Self-Employed', 'Self-Employed')], null=True, blank=True)
     next_of_kin = models.CharField(max_length=100, null=True, blank=True)
     next_of_kin_address = models.CharField(max_length=100, null=True, blank=True)
     next_of_kin_contact = models.CharField(max_length=100, null=True, blank=True)
@@ -27,6 +28,6 @@ class Dependent(models.Model):
     phone = models.CharField(max_length=100, null=True, blank=True)
     dependent_to = models.ForeignKey('Members.Member', on_delete=models.CASCADE, related_name='dependent_to')
     biodata = models.ForeignKey('Biodata', on_delete=models.CASCADE)
-    relationship = models.CharField(max_length=100, choices=[('Spouse', 'Spouse'), ('Child', 'Child'), ('Sibling', 'Sibling'), ('Parent', 'Parent'), ('Other', 'Other')], null=True, blank=True)
+    relationship = models.CharField(max_length=100, choices=[('Spouse', 'Spouse'), ('Child', 'Child'), ('Sibling', 'Sibling'), ('Parent', 'Parent'), ('Parent-in-law', 'Parent-in-law')], null=True, blank=True)
 
 

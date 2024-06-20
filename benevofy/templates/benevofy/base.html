@@ -151,6 +151,16 @@
           </li>
           {% endif %}
           {% if user.member.current_mode == 'Admin' %}
+          <li class="nav-item menu-items{% if request.path == '/Withdrawals/withdraw/' %} active{% endif %}">
+            <a class="nav-link" href="">
+              <span class="menu-icon">
+                <i class="mdi mdi-cash-refund"></i>
+              </span>
+              <span class="menu-title">Withdraws</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Admin' %}
           <li class="nav-item menu-items{% if request.path == '/Administrators/view-administrators/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'administrators' %}">
               <span class="menu-icon">

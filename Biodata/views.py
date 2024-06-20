@@ -24,8 +24,10 @@ def add_biodata(request):
     else:
         if request.user.member.biodata:
             form = BiodataForm(instance=request.user.member.biodata)
+            form.fields['date_of_birth'].widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control mb-3'})
         else:
             form = BiodataForm()
+            form.fields['date_of_birth'].widget = forms.DateInput(attrs={'type': 'date', 'class': 'form-control mb-3'})
     return render(request, 'benevofy/add_biodata.html', {'form': form})
 
 

@@ -51,7 +51,7 @@
                 <td>{{ saving_target.last_saved_date|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>{{ saving_target.target_date|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>
-                  <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-currency-usd"></i> Savings</a>
+                  <a href="{% url 'view_target_savings' saving_target.id %}" class="btn btn-outline-primary"><i class="mdi mdi-chart-bar"></i> Report</a>
                   <a href="{% url 'save_money' saving_target.id %}" class="btn btn-outline-success"><i class="mdi mdi-currency-usd"></i> Save</a>
                   <a href="" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Delete</a>
                 </td>

@@ -8,7 +8,7 @@ def view_administrators(request):
 def assign_admin(request, member_id):
     member = request.user.member
     new_admin = member.logged_in_association.members.get(id=member_id)
-    member.logged_in_association.admins.add(member)
+    member.logged_in_association.admins.add(new_admin)
     return redirect('administrators')
 
 
