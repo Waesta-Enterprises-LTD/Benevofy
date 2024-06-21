@@ -17,6 +17,7 @@
               countdown = countdown - 1;
               if (countdown < 0) {
                 window.location.href = '/';
+                clearInterval(countdown);
               } else {
                 document.getElementById("countdown").innerHTML = "Redirecting you in " + countdown + " seconds.";
               }

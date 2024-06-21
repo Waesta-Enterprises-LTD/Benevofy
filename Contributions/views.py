@@ -92,7 +92,7 @@ def request_to_pay(request):
             return redirect('payment_initiated')
         else:
             contributions = EventContribution.objects.filter(reference=reference).delete()
-            return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Payment request failed. Contact your support.', 'events': events, 'member_paying': member_paying})
+            return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Payment request failed. Contact your support.', 'events': events, 'member_paying': member_paying.id})
 
 
 def select_member_to_pay(request):
