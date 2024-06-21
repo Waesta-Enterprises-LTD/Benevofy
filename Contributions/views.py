@@ -66,7 +66,7 @@ def request_to_pay(request):
         if phone.startswith('256'):
             currency = 'UGX'
         elif phone.startswith('254'):
-            currency = 'KES'
+            currency = 'KES' 
         else:
             return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'events': events})
         payload = {
@@ -80,3 +80,7 @@ def request_to_pay(request):
         response = requests.request("POST", url, headers=headers, json=payload)
         print(response.json())
         return redirect('payment_initiated')
+
+
+def select_member_to_pay(request):
+    return render(request, 'benevofy/select_member_to_pay.html')

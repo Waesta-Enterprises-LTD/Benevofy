@@ -23,7 +23,7 @@ class Member(models.Model):
     phone = models.CharField(max_length=20)
     gender = models.CharField(max_length=10, choices=[("Male", "Male"), ("Female", "Female")], null=True, blank=True)
     declaration = models.TextField(max_length=1000 ,null=True, blank=True)
-    is_admin = models.BooleanField(default=False)
+    registered_by = models.ForeignKey('Members.Member', on_delete=models.SET_NULL, null=True, blank=True, related_name='member_registered_by')
 
     def __str__(self):
         return f"{self.user.first_name} {self.user.last_name}"

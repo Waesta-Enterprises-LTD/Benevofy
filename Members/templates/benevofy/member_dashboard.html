@@ -187,7 +187,7 @@
                 </tbody>
               </table>
               {% if events|length > 0 %}
-              <a href="{% url 'select_events' %}" class="btn btn-primary mt-3"><i class="mdi mdi-cash-multiple"></i> Pay Now</a>
+              <a href="{% url 'select_member_to_pay' %}" class="btn btn-primary mt-3"><i class="mdi mdi-cash-multiple"></i> Pay Now</a>
               {% else %}
               <a href="{% url 'create-event' %}" class="btn btn-primary mt-3">Create Event</a>
               {% endif %}
