@@ -49,8 +49,14 @@ def member_dashboard(request):
     html_content = pio.to_html(fig, full_html=False)
     association = request.user.member.logged_in_association
     participated_events_last_10 = association.events.filter(contributions__user=request.user.member).order_by('-created_at')[:10].count()
-    last_10 = (participated_events_last_10 / association.events.all().count()) * 100
-    overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
+    try:
+        last_10 = (participated_events_last_10 / association.events.all().count()) * 100
+    except ZeroDivisionError:
+        last_10 = 0
+    try:
+        overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
+    except ZeroDivisionError:
+        overall_participation = 0
     return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation})
 
 
