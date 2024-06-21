@@ -6,6 +6,9 @@
     <h3 class="card-title">Select Event</h3>
     <form action="{% url 'pay_for_events' %}" method="post" style="padding: 10px;">
       {% csrf_token %}
+      <select name="member" hidden class="form-control mb-3">
+          <option value="{{ member_id }}">{{ member_id }}</option>
+      </select>
       {{ form.as_p }}
       <button type="submit" class="btn btn-success"><i class="mdi mdi-cash-multiple"></i> Pay</button>
     </form>
