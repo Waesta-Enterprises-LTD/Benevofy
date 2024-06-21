@@ -1,0 +1,45 @@
+{% extends 'benevofy/auth_base.html' %} 
+
+{% block content %}
+<div class="card-body px-5 py-5">
+  <form method="POST" action="{% url 'register-exists' %}">
+    {% csrf_token %}
+    {% if paid %}
+    <input type="hidden" name="paid" value="true">
+    {% else %}
+    <input type="hidden" name="paid" value="false">
+    {% endif %}
+    <input type="hidden" name="association" value="{{association.id}}">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" name="email" class="form-control" id="email" placeholder="Email registered on benevofy">
+    </div>
+    {% if not paid %}
+    <div class="form-group">
+      <label for="phone">Phone</label>
+      <input type="number" name="phone" class="form-control" id="phone" placeholder="number for payment">
+    </div>
+    <div class="form-group mb-3">
+      <label for="amount">Registration Fee for {{association}}</label>
+      <input type="number" name="amount" readonly class="form-control text-dark" value="{{ association.registration_fee }}" id="amount" placeholder="Enter the amount">
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+    {% if not paid %}
+    <button type="submit" class="btn btn-success btn-block" onclick="this.form.submit();this.classList.add('disabled')">
+      <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+      Pay
+    </button>
+    {% else %}
+    <button type="submit" class="btn btn-success btn-block" onclick="this.form.submit();this.classList.add('disabled')">
+      Register
+    </button>
+    {% endif %}
+  </form>
+</div>
+{% endblock %}
+

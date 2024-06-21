@@ -5,9 +5,12 @@ from django.template.loader import render_to_string
 from django.conf import settings
 from Auth.models import PasswordResetToken
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from Members.models import Member
 from Associations.models import Association
+from Payments.models import RegistrationPayment
 from uuid import uuid4
+import requests
 
 
 def login_member(request):
@@ -136,8 +139,18 @@ def register_member(request, registration_code):
     logout(request)
     try:
         association = Association.objects.get(registration_code=registration_code)
+        paid = False
     except Association.DoesNotExist:
-        return render(request, 'benevofy/register_member.html', {'error': 'Registration link expired. Please contact the association administrator.', 'expired': True})
+        try:
+            association = Association.objects.get(registration_code_paid=registration_code)
+            paid = True
+        except Association.DoesNotExist:
+            return render(request, 'benevofy/register_member.html', {'error': 'Registration link expired. Please contact the association administrator.', 'expired': True})
+    exists = request.GET.get('exists')
+    if exists == 'true':
+        return render(request, 'benevofy/enter_email.html', {'registration_code': str(registration_code), 'association': association, 'paid': paid})
+    elif not exists: 
+        return render(request, 'benevofy/do_you_exist.html')
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
@@ -209,3 +222,71 @@ def verify_email(request, verification_code):
         return redirect('login-member')
     except Member.DoesNotExist:
         return redirect('login-member')
+
+
+
+def register_exists(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        association_id = request.POST.get('association')
+        association = Association.objects.get(id=association_id)
+        member = Member.objects.get(user__email=email)
+        paid = request.POST.get('paid')
+        try:
+            association.members.get(user__email=email)
+            return render(request, 'benevofy/enter_email.html', {'error': 'User already registered in this association.', 'registration_code': str(association.registration_code), 'association': association, 'paid': (paid == 'true')})
+        except ObjectDoesNotExist:
+            pass
+        if paid == 'true':
+            paid = True
+            association.members.add(member)
+            member.associations.add(association)
+            member.logged_in_association = association
+            member.save()
+            association.registration_code_paid = uuid4()
+            association.save()
+            member.current_mode = 'Member'
+            member.save()
+            reference = str(uuid4())
+            registration = RegistrationPayment.objects.create(user=member.user, association=association, reference=reference, status='Paid')
+            return redirect('login-member')
+        else:
+            paid = False
+            phone = request.POST.get('phone')
+            reference = str(uuid4())
+            url = "https://payments.relworx.com/api/mobile-money/request-payment"
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.relworx.v2",
+                "Authorization": "Bearer ec719b1a0db84d.YNrIn4iWVanw1Y0ptYvrVA"
+            }
+            if phone.startswith('256'):
+                currency = 'UGX'
+            elif phone.startswith('254'):
+                currency = 'KES' 
+            else:
+                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'paid': paid, 'association': association})
+            payload = {
+                "account_no": association.rel_account,
+                "reference": reference,
+                "msisdn": '+'+phone,
+                "currency": currency,
+                "amount": int(association.registration_fee),
+                "description": "Registration Fee Payment Request."
+            }
+            response = requests.request("POST", url, headers=headers, json=payload)
+            response = response.json()
+            print(response)
+            if response['success']:
+                payment = RegistrationPayment.objects.create(
+                    user=member,
+                    association=association,
+                    reference=reference,
+                    amount_paid=association.registration_fee,
+                )
+                return redirect('login-member')
+            else:
+                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Failed to make payment. Contact support.', 'paid': paid, 'association': association})
+
+
+

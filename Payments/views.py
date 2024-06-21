@@ -7,6 +7,7 @@ from django.views.decorators.http import require_http_methods
 from Events.models import Event
 from Savings.models import Saving
 from Loans.models import LoanRepayment
+from .models import Payment, RegistrationPayment
 
 
 def payment_initiated(request):
@@ -18,6 +19,17 @@ def payment_initiated(request):
 def webhook_receiver(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        try:
+            registration = RegistrationPayment.objects.get(reference=data['customer_reference'])
+            if data['status'] == 'success':
+                registration.status = 'Paid'
+                registration.save()
+                registration.association.members.add(registration.user)
+                registration.user.associations.add(registration.association)
+            else:
+                registration.delete()
+        except RegistrationPayment.DoesNotExist:
+            pass
         contributions = EventContribution.objects.filter(reference=data['customer_reference'])
         if contributions.count() == 0:
             savings = Saving.objects.filter(reference=data['customer_reference'])

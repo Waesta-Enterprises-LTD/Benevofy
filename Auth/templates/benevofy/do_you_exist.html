@@ -1,0 +1,16 @@
+{% extends 'benevofy/auth_base.html' %}
+
+{% block content %}
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title">Are you already registered on benevofy?</h4>
+            <div class="form-group">
+                <a href="{{request.path}}?exists=true" type="submit" class="btn btn-success mr-2">Yes</a>
+                <a href="{{request.path}}?exists=false" type="submit" class="btn btn-danger ml-2">No</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
