@@ -76,7 +76,7 @@ def request_to_pay(request):
         elif phone.startswith('254'):
             currency = 'KES' 
         else:
-            return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'events': events, 'member_paying': member_paying})
+            return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'events': events, 'member_paying': member_paying.id})
         payload = {
             "account_no": member.logged_in_association.rel_account,
             "reference": reference,
