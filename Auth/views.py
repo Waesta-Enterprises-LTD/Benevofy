@@ -169,14 +169,15 @@ def register_member(request, registration_code):
                 user.save()
                 verification_code = uuid4()
                 member = Member.objects.create(user=user, gender=gender)
-                member.associations.add(association)
-                member.logged_in_association = association
-                member.phone = phone
-                member.verification_code = verification_code
-                member.save()
-                association.registration_code = uuid4()
-                association.save()
-                association.members.add(member)
+                if paid:
+                    member.associations.add(association)
+                    member.logged_in_association = association
+                    member.phone = phone
+                    member.verification_code = verification_code
+                    member.save()
+                    association.registration_code = uuid4()
+                    association.save()
+                    association.members.add(member)
                 subject = 'Benevofy Email Verification'
                 message = render_to_string('benevofy/verification_email.html', {
                     'user': user,
@@ -186,7 +187,10 @@ def register_member(request, registration_code):
                 from_email = settings.DEFAULT_FROM_EMAIL
                 to_email = [user.email]
                 send_mail(subject, message, from_email, to_email, fail_silently=False, html_message=message)
-                return redirect('login-member')
+                if paid:
+                    return redirect('login-member')
+                else:
+                    return render(request, 'benevofy/enter_email.html', {'email': email, 'error': 'Pay registration fee to continue', 'registration_code': str(registration_code), 'association': association, 'paid': paid})
         else:
             return render(request, 'benevofy/register_member.html', {'error': 'Passwords do not match', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
     else:

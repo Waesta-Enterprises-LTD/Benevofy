@@ -8,6 +8,7 @@ from Events.models import Event
 from Savings.models import Saving
 from Loans.models import LoanRepayment
 from .models import Payment, RegistrationPayment
+from uuid import uuid4
 
 
 def payment_initiated(request):
@@ -22,6 +23,8 @@ def webhook_receiver(request):
         try:
             registration = RegistrationPayment.objects.get(reference=data['customer_reference'])
             if data['status'] == 'success':
+                registration.association.registration_code = str(uuid4())
+                registration.association.save()
                 registration.status = 'Paid'
                 registration.save()
                 registration.association.members.add(registration.user)

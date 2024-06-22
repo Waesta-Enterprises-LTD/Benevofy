@@ -12,7 +12,7 @@
     <input type="hidden" name="association" value="{{association.id}}">
     <div class="form-group">
       <label for="email">Email</label>
-      <input type="email" name="email" class="form-control" id="email" placeholder="Email registered on benevofy">
+      <input {% if email %}readonly{% endif %} type="email" name="email" value="{{ email }}" class="form-control {% if email %}text-dark{% endif %}" id="email" placeholder="Email registered on benevofy">
     </div>
     {% if not paid %}
     <div class="form-group">
