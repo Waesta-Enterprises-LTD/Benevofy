@@ -26,6 +26,9 @@ def webhook_receiver(request):
                 registration.save()
                 registration.association.members.add(registration.user)
                 registration.user.associations.add(registration.association)
+                registration.user.current_mode = 'Member'
+                registration.user.logged_in_association = registration.association
+                registration.user.save()
             else:
                 registration.delete()
         except RegistrationPayment.DoesNotExist:

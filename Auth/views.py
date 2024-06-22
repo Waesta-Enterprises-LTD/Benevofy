@@ -195,6 +195,7 @@ def register_member(request, registration_code):
 def switch_association(request, association_id):
     association = Association.objects.get(id=association_id)
     request.user.member.logged_in_association = association
+    request.user.member.current_mode = 'Member'
     request.user.member.save()
     return redirect('member-dashboard')
 
