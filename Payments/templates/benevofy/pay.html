@@ -29,7 +29,7 @@
       {% for event in events %}
         <div class="form-group">
           <label for="amount">Amount for {{ event.name }}</label>
-          <input type="number" class="form-control" id="amount" name="amount-{{ event.id }}" placeholder="Amount for {{ event.name }} minimum {{event.minimum_contribution}}" min="{{event.minimum_contribution}}">
+          <input required type="number" class="form-control" id="amount" name="amount-{{ event.id }}" placeholder="Amount for {{ event.name }} minimum {{event.minimum_contribution}}" min="{{event.minimum_contribution}}">
         </div>
       {% endfor %}
       <button type="submit" class="btn btn-success">Submit</button>

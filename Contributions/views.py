@@ -58,7 +58,7 @@ def request_to_pay(request):
             event = Event.objects.get(pk=event_id)
             print(request.POST)
             amount = request.POST.get(f'amount-{event_id}')
-            total_amount += float(amount)
+            total_amount += float(int(amount))
             contribution = EventContribution.objects.create(
                 user=member_paying,
                 event=event,
