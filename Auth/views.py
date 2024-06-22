@@ -168,7 +168,7 @@ def register_member(request, registration_code):
                 user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=last_name)
                 user.save()
                 verification_code = uuid4()
-                member = Member.objects.create(user=user, gender=gender)
+                member = Member.objects.create(user=user, gender=gender, phone=phone, verification_code=verification_code)
                 if paid:
                     member.associations.add(association)
                     member.logged_in_association = association
