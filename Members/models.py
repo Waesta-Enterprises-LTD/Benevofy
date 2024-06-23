@@ -12,6 +12,7 @@ class Member(models.Model):
         blank=True,
         related_name='member_biodata'
     )
+    suspensions = models.ManyToManyField('Suspensions.Suspension', blank=True, related_name='member_suspensions')
     email_verified = models.BooleanField(default=False)
     verification_code = models.CharField(max_length=500, null=True, blank=True)
     current_mode = models.CharField(max_length=10, choices=[("Member", "Member"), ("Admin", "Admin")], default="Member")

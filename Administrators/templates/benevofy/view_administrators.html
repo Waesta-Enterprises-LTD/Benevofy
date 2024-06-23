@@ -44,7 +44,27 @@
                 <td>{{ admin.user.last_login|naturaltime }}</td>
                 <td>
                   <a href="" class="btn btn-outline-secondary"><i class="mdi mdi-eye"></i>Actions</a>
-                  <a href="{% url 'revoke-admin' admin.id %}" class="btn btn-outline-danger"><i class="mdi mdi-delete"></i> Revoke</a>
+                  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#revokeModal{{ admin.id }}"><i class="mdi mdi-delete"></i> Revoke</button>
+
+                  <div class="modal fade" id="revokeModal{{ admin.id }}" tabindex="-1" role="dialog" aria-labelledby="revokeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="revokeModalLabel">Revoke Admin</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to revoke admin privileges from {{ admin.user.first_name }} {{ admin.user.last_name }}?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                          <a href="{% url 'revoke-admin' admin.id %}" class="btn btn-danger">Revoke</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </td>
               </tr>
               {% empty %}

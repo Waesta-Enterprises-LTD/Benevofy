@@ -17,6 +17,7 @@ class Event(models.Model):
     )
     event_type = models.CharField(max_length=100, choices=event_types, null=True, blank=True)
     minimum_contribution = models.IntegerField(null=True, blank=True)
+    minimum_contribution_kes = models.IntegerField(null=True, blank=True)
     contributions = models.ManyToManyField('Contributions.EventContribution', blank=True, related_name='event_contributions')
     closing_date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=[('Active', 'Active'), ('Closed', 'Closed')], default='Active')

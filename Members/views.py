@@ -8,6 +8,15 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 import plotly.graph_objects as go
 import plotly.io as pio
+from Suspensions.forms import SuspensionForm
+from PIL import Image, ImageFont, ImageDraw
+from django.http import HttpResponse, FileResponse
+import os
+from io import BytesIO
+from datetime import datetime, timedelta
+from barcode import EAN13 
+from barcode.writer import ImageWriter 
+import random
 
 
 
@@ -57,7 +66,8 @@ def member_dashboard(request):
         overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
     except ZeroDivisionError:
         overall_participation = 0
-    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation})
+    form = SuspensionForm()
+    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation, 'form': form})
 
 
 def profile(request):
@@ -80,6 +90,7 @@ def settings(request):
 
 def view_members(request):
     query = request.GET.get('search')
+    form = SuspensionForm()
     if query:
         members = Member.objects.filter(
             Q(user__first_name__icontains=query) |
@@ -91,5 +102,40 @@ def view_members(request):
     paginator = Paginator(members, 6)
     page = request.GET.get('page')
     members = paginator.get_page(page)
-    return render(request, 'benevofy/members.html', {'members': members})
+    return render(request, 'benevofy/members.html', {'members': members, 'form': form})
+
+
+
+def create_barcode(member):
+    qnumber = str(random.randint(100000000000, 999999999999))+'0'+str(member.pk)
+    my_code = EAN13(qnumber, writer=ImageWriter())
+    img = my_code.save('barcode')
+    img = open('barcode.png', 'rb')
+    return img
+
+
+
+def generate_id_card(request):
+    image = Image.open('id_card_male-01.jpg')
+    draw = ImageDraw.Draw(image)
+    font = ImageFont.truetype("arial.ttf", 30)
+    member = Member.objects.get(pk=request.user.member.pk)
+    draw.text((485, 225), f"{member.user.first_name} {member.user.last_name}", font=font, fill=(0, 0, 0))
+    draw.text((485, 295), f"{member.user.email}", font=font, fill=(0, 0, 0))
+    draw.text((485, 365), f"{member.phone}", font=font, fill=(0, 0, 0))
+    draw.text((640, 435), f"{member.biodata.date_of_birth.strftime('%d/%m/%Y')}", font=font, fill=(0, 0, 0))
+    generated_on = datetime.now().strftime("%d/%m/%Y")
+    expiry_date = (datetime.now() + timedelta(days=365)).strftime("%d/%m/%Y")
+    draw.text((500, 570), f"{generated_on}", font=font, fill=(0, 0, 0))
+    draw.text((840, 570), f"{expiry_date}", font=font, fill=(0, 0, 0))
+    bar_code = create_barcode(member)
+    bar_code = Image.open(bar_code).resize((380, 110))
+    image.paste(bar_code, (5, 500))
+    card_path = f'{member.user.first_name}-id_card.jpg'
+    card_io = BytesIO()
+    image.save(card_io, format='JPEG')
+    card_io.seek(0)
+    return FileResponse(card_io, as_attachment=True, filename=card_path)
+
+
 

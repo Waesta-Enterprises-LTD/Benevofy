@@ -59,9 +59,48 @@
                 <td>{{ member.contributions.count }}</td>
                 <td>
                   <a href="{% url 'member-profile' member.id %}" class="btn btn-outline-primary">Profile</a>
-                  <button class="btn btn-outline-warning">Suspend</button>
+                  <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#suspendModal-{{ member.id }}">Suspend</button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="suspendModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="suspendModalLabel-{{ member.id }}" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="suspendModalLabel-{{ member.id }}">Suspend {{ member.user.get_full_name }}</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form action="" method="post">
+                                {% csrf_token %}
+                                {{ form.as_p }}
+                                <button type="submit" class="btn btn-danger">Suspend</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                   {% if member not in user.member.logged_in_association.admins.all and user.member.current_mode == 'Admin' %}
-                  <a href="{% url 'assign-admin' member.id %}" class="btn btn-outline-success">Make Admin</a>
+                  <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#assignAdminModal-{{ member.id }}">Make Admin</button>
+                  <!-- Modal -->
+                  <div class="modal fade" id="assignAdminModal-{{ member.id }}" tabindex="-1" role="dialog" aria-labelledby="assignAdminModalLabel-{{ member.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="assignAdminModalLabel-{{ member.id }}">Are you sure you want to make {{ member.user.get_full_name }} an admin?</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                            <a href="{% url 'assign-admin' member.id %}" class="btn btn-success">Confirm</a>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   {% endif %}
                 </td>
                 <td>

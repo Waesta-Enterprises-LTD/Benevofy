@@ -8,6 +8,11 @@ from django import forms
 from django.http import HttpResponse
 import os
 import tempfile
+import pandas as pd
+import openpyxl
+from openpyxl import Workbook
+from fpdf import FPDF
+
 
 
 def events(request):
@@ -55,35 +60,63 @@ def create_event(request):
 
 def event_report(request, event_id):
     event = Event.objects.get(id=event_id)
-    contributions = event.contributions.all()
+    from_date = request.GET.get('from_date')
+    to_date = request.GET.get('to_date')
+    format = request.GET.get('format')
 
-    # Create a workbook and a worksheet
-    workbook = xlsxwriter.Workbook(f'event_report_{event.name}.xlsx')
-    worksheet = workbook.add_worksheet()
+    contributions = event.contributions.filter(created_at__gte=from_date, created_at__lte=to_date)
 
-    # Define the header row
-    header_format = workbook.add_format({'bold': True})
-    worksheet.write_row(0, 0, ['Contributor', 'Amount', 'Date'], header_format)
+    # Create a DataFrame and export it to the specified format
+    df = pd.DataFrame({
+        'Member': [contribution.user.user.get_full_name() for contribution in contributions],
+        'Amount': [contribution.amount for contribution in contributions],
+        'Reference': [contribution.reference for contribution in contributions],
+        'Date': [contribution.created_at.strftime('%Y-%m-%d') for contribution in contributions]
+    })
 
-    # Write the data to the worksheet
-    row = 1  # Start from row 1
-    for contribution in contributions:
-        worksheet.write(row, 0, contribution.member.name)
-        worksheet.write(row, 1, contribution.amount)
-        worksheet.write(row, 2, contribution.date)
-        row += 1
+    if format == 'xlsx':
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename=event_report_{event.name}_{from_date}_{to_date}.xlsx'
+        df.to_excel(response, index=False)
+    elif format == 'pdf':
+        response = HttpResponse(content_type='application/pdf')
+        filename = f'event_report_{event.name}_{from_date}_{to_date}.pdf'
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
+        pdf = FPDF(format='A4')
+        pdf.add_page()
+        pdf.set_xy(10, 10)
+        pdf.set_font('Helvetica', '', 16)
+        pdf.cell(280, 20, 'Event Report', 0, 1, 'C')
+        pdf.cell(280, 20, f'{event.name} - {from_date} to {to_date}', 0, 1, 'C')
+        pdf.cell(280, 20, '', 0, 1)
+        pdf.set_font('Helvetica', '', 10)
+        pdf.cell(60, 10, 'Member', 1, 0)
+        pdf.cell(60, 10, 'Amount', 1, 0, 'C')
+        pdf.cell(60, 10, 'Reference', 1, 0)
+        pdf.cell(60, 10, 'Date', 1, 1, 'C')
+        for _, row in df.iterrows():
+            pdf.cell(60, 10, row['Member'], 1, 0)
+            pdf.cell(60, 10, f'{row["Amount"]:0.2f}', 1, 0, 'R')
+            pdf.cell(60, 10, row['Reference'], 1, 0)
+            pdf.cell(60, 10, row['Date'], 1, 1, 'C')
+        pdf_content = pdf.output().encode('latin-1')
+        response.write(pdf_content)
+    else:
+        raise ValueError('Invalid format')
 
-    # Save the workbook to a temporary file and delete it afterwards
-    with tempfile.NamedTemporaryFile(delete=True, suffix='.xlsx') as temp_file:
-        workbook.close()
-        temp_file.write(open(f'event_report_{event.name}.xlsx', 'rb').read())
-
-    # Return the workbook as a response
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = f'attachment; filename=event_report_{event.name}.xlsx'
-    with open(f'event_report_{event.name}.xlsx', 'rb') as file:
-        response.write(file.read())
-
-    os.remove(f'event_report_{event.name}.xlsx')
     return response
 
+
+
+def close_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+    event.status = 'Closed'
+    event.save()
+    return redirect('events')
+
+
+def resume_event(request, event_id):
+    event = Event.objects.get(id=event_id)
+    event.status = 'Active'
+    event.save()
+    return redirect('events')

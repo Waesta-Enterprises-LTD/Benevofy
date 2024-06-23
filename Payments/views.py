@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import json
 from Contributions.models import EventContribution
@@ -9,6 +9,7 @@ from Savings.models import Saving
 from Loans.models import LoanRepayment
 from .models import Payment, RegistrationPayment
 from uuid import uuid4
+from django.db.models import Q
 
 
 def payment_initiated(request):
@@ -65,6 +66,29 @@ def webhook_receiver(request):
 
 def view_paid_list(request, event_id):
     event = Event.objects.get(pk=event_id)
-    contributions = EventContribution.objects.filter(event=event, status='Paid')
-    return render(request, 'benevofy/view_paid_list.html', {'contributions': contributions, 'event': event})
+    contributions = EventContribution.objects.filter(event=event, status='Paid').order_by('-created_at')
+    members = request.user.member.logged_in_association.members.exclude(id__in=contributions.values_list('user_id', flat=True)).distinct()
+    return render(request, 'benevofy/view_paid_list.html', {'contributions': contributions, 'event': event, 'members': members})
 
+
+def add_manual_payment(request, event_id):
+    if request.method == 'POST':
+        member = request.user.member
+        event = Event.objects.get(pk=event_id)
+        member_paid = request.POST.get('member')
+        currency = request.POST.get('currency')
+        member_paid = member.logged_in_association.members.get(id=member_paid)
+        amount = request.POST.get('amount')
+        reference = str(uuid4())
+        contribution = EventContribution.objects.create(
+            user=member_paid,
+            event=event,
+            reference=reference,
+            amount=amount,
+            method='Manual',
+            currency=currency,
+            status='Paid'
+        )
+        member_paid.contributions.add(contribution)
+        event.contributions.add(contribution)
+        return redirect('view_paid_list', event_id=event.id)

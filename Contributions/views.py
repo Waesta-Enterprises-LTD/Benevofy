@@ -77,6 +77,9 @@ def request_to_pay(request):
             currency = 'KES' 
         else:
             return render(request, 'benevofy/pay.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'events': events, 'member_paying': member_paying.id})
+        contribution.currency = currency
+        contribution.phone = phone
+        contribution.save()
         payload = {
             "account_no": member.logged_in_association.rel_account,
             "reference": reference,
