@@ -64,7 +64,8 @@ INSTALLED_APPS = [
     'Savings',
     'whitenoise.runserver_nostatic',
     'Biodata',
-    'Suspensions'
+    'Suspensions',
+    'Withdraws',
 ]
 
 MIDDLEWARE = [

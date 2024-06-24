@@ -165,8 +165,8 @@
           </li>
           {% endif %}
           {% if user.member.current_mode == 'Admin' %}
-          <li class="nav-item menu-items{% if request.path == '/Withdrawals/withdraw/' %} active{% endif %}">
-            <a class="nav-link" href="">
+          <li class="nav-item menu-items{% if request.path == '/Withdraws/view_withdraws/' %} active{% endif %}">
+            <a class="nav-link" href="{% url 'view_withdraws' %}">
               <span class="menu-icon">
                 <i class="mdi mdi-cash-refund"></i>
               </span>
