@@ -24,7 +24,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form action="" method="post">
+                  <form action="{% url 'make_withdraw' %}" method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-primary">Request Withdraw</button>
@@ -63,14 +63,118 @@
               </tr>
             </thead>
             <tbody>
-              {% for withdraw in withdraws %}
+              {% for withdraw in user.member.withdraws.all %}
               <tr>
                 <td>{{ withdraw.id }}</td>
                 <td>{{ withdraw.amount|intcomma }} UGX</td>
                 <td>{{ withdraw.status }}</td>
                 <td>{{ withdraw.created_at|date:"SHORT_DATE_FORMAT" }}</td>
                 <td>
-                  <a href="{% url 'view_withdraw_request' withdraw.id %}" class="btn btn-outline-primary"><i class="mdi mdi-eye"></i> View</a>
+                  <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#detailsModal{{ withdraw.id }}"><i class="mdi mdi-eye"></i> Details</button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="detailsModal{{ withdraw.id }}" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel{{ withdraw.id }}">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="detailsModalLabel{{ withdraw.id }}">Withdraw Details</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <strong>Reason:</strong> {{ withdraw.reason_for_rejection }}<br>
+                          <strong>Status:</strong> {{ withdraw.status }}<br>
+                          <strong>Account Name:</strong> {{ withdraw.names }}<br>
+                          <strong>Bank Account/Phone Number:</strong> {{ withdraw.phone }}<br>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% if withdraw.status == 'Pending' %}
+                  <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#approveModal{{ withdraw.id }}"><i class="mdi mdi-check"></i> Approve</button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="approveModal{{ withdraw.id }}" tabindex="-1" role="dialog" aria-labelledby="approveModalLabel{{ withdraw.id }}">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="approveModalLabel{{ withdraw.id }}">Approve Withdraw</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Are you sure you want to approve this withdraw request?</p>
+                          <p>
+                            Send money to:<br>
+                            {{ withdraw.names }}<br>
+                            {{ withdraw.phone }}
+                          </p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'approve_withdraw' withdraw.id %}" class="btn btn-primary">Approve</a>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline-danger" data-toggle="modal" data-target="#rejectModal{{ withdraw.id }}"><i class="mdi mdi-close"></i> Reject</button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="rejectModal{{ withdraw.id }}" tabindex="-1" role="dialog" aria-labelledby="rejectModalLabel{{ withdraw.id }}">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="rejectModalLabel{{ withdraw.id }}">Reject Withdraw</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Are you sure you want to reject this withdraw request?</p>
+                          <form action="{% url 'reject_withdraw' withdraw.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                              <label for="reason">Reason</label>
+                              <textarea class="form-control" id="reason" name="" rows="3"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-danger">Reject</button>
+                          </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#cancelModal{{ withdraw.id }}"><i class="mdi mdi-cancel"></i> Cancel</button>
+
+                  <!-- Modal -->
+                  <div class="modal fade" id="cancelModal{{ withdraw.id }}" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel{{ withdraw.id }}">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h4 class="modal-title" id="cancelModalLabel{{ withdraw.id }}">Cancel Withdraw</h4>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <p>Are you sure you want to cancel this withdraw request?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="" class="btn btn-warning">Cancel</a>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              {% endif %}
+
                 </td>
               </tr>
               {% empty %}

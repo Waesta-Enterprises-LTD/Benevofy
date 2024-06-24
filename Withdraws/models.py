@@ -7,6 +7,7 @@ class Withdraw(models.Model):
     phone = models.CharField(max_length=20)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     reference = models.CharField(max_length=100)
+    reason_for_rejection = models.TextField(max_length=1000, null=True, blank=True)
     status = models.CharField(max_length=100, choices=(('Pending', 'Pending'), ('Successful', 'Successful')), default='Pending')
     created_at = models.DateTimeField(auto_now_add=True)
 
