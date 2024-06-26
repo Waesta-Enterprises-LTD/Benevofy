@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
-from .models import Event
-from .forms import EventForm
+from .models import Event, PersonalEvent
+from .forms import EventForm, PersonalEventForm
 from django.core.paginator import Paginator
 import xlsxwriter
 from django import forms
@@ -120,3 +120,43 @@ def resume_event(request, event_id):
     event.status = 'Active'
     event.save()
     return redirect('events')
+
+
+def create_personal_event(request):
+    if request.method == 'POST':
+        form = PersonalEventForm(request.POST)
+        if form.is_valid():
+            event = form.save(commit=False)
+            event.member = request.user.member
+            event.save()
+            request.user.member.events.add(event)
+            return redirect('view-personal-events')
+    else:
+        form = PersonalEventForm()
+    return render(request, 'benevofy/create_personal_event.html', {'form': form})
+
+
+
+def view_personal_events(request):
+    events = request.user.member.events.filter(status='Active')
+    return render(request, 'benevofy/personal_events.html', {'events': events})
+
+
+def delete_personal_event(request, event_id):
+    event = PersonalEvent.objects.get(id=event_id)
+    event.delete()
+    return redirect('view-personal-events')
+
+
+def close_personal_event(request, event_id):
+    event = PersonalEvent.objects.get(id=event_id)
+    event.status = 'Closed'
+    event.save()
+    return redirect('view-personal-events')
+
+
+def resume_personal_event(request, event_id):
+    event = PersonalEvent.objects.get(id=event_id)
+    event.status = 'Active'
+    event.save()
+    return redirect('view-personal-events')

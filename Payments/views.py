@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 import json
-from Contributions.models import EventContribution
+from Contributions.models import EventContribution, PersonalEventContribution
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from Events.models import Event
+from Events.models import Event, PersonalEvent
 from Savings.models import Saving
 from Loans.models import LoanRepayment
 from .models import Payment, RegistrationPayment
@@ -13,7 +13,10 @@ from django.db.models import Q
 
 
 def payment_initiated(request):
-    return render(request, 'benevofy/payment_initiated.html')
+    if request.user.is_authenticated:
+        return render(request, 'benevofy/payment_initiated.html')
+    else:
+        return render(request, 'benevofy/payment_init.html')
 
 
 @csrf_exempt
@@ -21,6 +24,15 @@ def payment_initiated(request):
 def webhook_receiver(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        try:
+            contribution = PersonalEventContribution.objects.get(reference=data['customer_reference'])
+            if data['status'] == 'success':
+                contribution.status = 'Paid'
+                contribution.save()
+            else:
+                contribution.delete()
+        except PersonalEventContribution.DoesNotExist:
+            pass
         try:
             registration = RegistrationPayment.objects.get(reference=data['customer_reference'])
             if data['status'] == 'success':
@@ -92,3 +104,8 @@ def add_manual_payment(request, event_id):
         member_paid.contributions.add(contribution)
         event.contributions.add(contribution)
         return redirect('view_paid_list', event_id=event.id)
+
+
+def view_personal_paid_list(request, event_id):
+    personal_event = PersonalEvent.objects.get(pk=event_id)
+    return render(request, 'benevofy/view_personal_paid_list.html', {'event': personal_event})

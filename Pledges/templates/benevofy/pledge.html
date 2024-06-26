@@ -1,0 +1,15 @@
+{% extends 'benevofy/auth_base.html' %} 
+
+{% load static %}
+
+{% block content %}
+<div class="card-body px-5 py-5">
+    <h4 class="card-title">Pledge Form <br> <span class="text-success">({{event.name}})</span></h4>
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success btn-block"><i class="mdi mdi-download"></i> Download Pledge Card </button>
+  </form>
+</div>
+{% endblock %}
+

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib import admin
-from .models import EventContribution
+from .models import EventContribution, PersonalEventContribution
 
 @admin.register(EventContribution)
 class EventContributionAdmin(admin.ModelAdmin):
@@ -10,3 +10,11 @@ class EventContributionAdmin(admin.ModelAdmin):
     ordering = ('-created_at',)
     readonly_fields = ('created_at',)
 
+
+@admin.register(PersonalEventContribution)
+class PersonalEventContributionAdmin(admin.ModelAdmin):
+    list_display = ('names', 'reference', 'amount', 'created_at', 'status')
+    list_filter = ('status',)
+    search_fields = ('names', 'email', 'phone')
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at',)

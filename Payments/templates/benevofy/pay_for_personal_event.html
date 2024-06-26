@@ -1,0 +1,24 @@
+{% extends 'benevofy/auth_base.html' %} 
+
+{% load static %}
+
+{% block content %}
+<div class="card-body px-5 py-5">
+    <h4 class="card-title">Event Contribution <br> <span class="text-success">({{event.name}})</span></h4>
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    {% endif %}
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <div class="mb-2">
+        <img src="{% static 'images/mmm.jpg' %}" alt="" class="img-fluid">
+    </div>
+    <button type="submit" class="btn btn-success btn-block">Pay Now <i class="mdi mdi-arrow-right"></i></button>
+  </form>
+</div>
+{% endblock %}
+
+

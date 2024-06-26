@@ -204,6 +204,14 @@ def switch_association(request, association_id):
     return redirect('member-dashboard')
 
 
+def switch_to_personal_account(request):
+    member = request.user.member
+    member.logged_in_association = None
+    member.current_mode = 'Personal'
+    member.save()
+    return redirect('member-dashboard')
+
+
 def switch_to_member(request):
     request.user.member.current_mode = 'Member'
     request.user.member.save()

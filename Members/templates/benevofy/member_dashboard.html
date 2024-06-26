@@ -90,6 +90,7 @@
         </div>
       </div>
       {% else %}
+      {% if user.member.current_mode == 'Member' %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -128,6 +129,46 @@
           </div>
         </div>
       </div>
+      {% else %}
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Contributions</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{total_contributions}}</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success">
+                  <span class="mdi mdi-currency-usd icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title">Pledges</h4>
+            <div class="row">
+              <div class="col-9">
+                <div class="d-flex align-items-center align-self-start">
+                  <h3 class="mb-0">{{total_pledges}}</h3>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="icon icon-box-success">
+                  <span class="mdi mdi-cash-multiple icon-item"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endif %}
       {% endif %}
       {% if user.member.current_mode == 'Admin' %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
@@ -150,6 +191,7 @@
         </div>
       </div>
       {% endif %}
+      {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
       <div class="col-xl-3 col-sm-6 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -169,8 +211,10 @@
           </div>
         </div>
       </div>
+      {% endif %}
     </div>
     <div class="row">
+      {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
       <div class="col-md-4 grid-margin stretch-card">
         <div class="card" style="height: 50vh; overflow-y: scroll;">
           <div class="card-body" style="padding-bottom: 10;">
@@ -179,7 +223,8 @@
           </div>
         </div>
       </div>
-      <div class="col-md-8 grid-margin stretch-card">
+      {% endif %}
+      <div class="{% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}col-md-8 grid-margin stretch-card{% else %} col-md-12 grid-margin stretch-card{% endif %}">
         <div class="card">
           <div class="card-body">
             <h4 class="card-title">Active Events</h4>
@@ -199,9 +244,17 @@
                   <tr>
                     <td>{{ event.name }}</td>
                     <td>{{ event.minimum_contribution }} UGX {% if event.minimum_contribution_kes %}/ {{event.minimum_contribution_kes}} KES{% endif %}</td>
+                    {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
                     <td>{{ event.closing_date }}</td>
+                    {% elif user.member.current_mode == 'Personal' %}
+                    <td>{{ event.event_date }}</td>
+                    {% endif %}
                     <td>
+                      {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
                       <a href="{% url 'view_paid_list' event.id %}" class="btn btn-outline-primary">Paid List</a>
+                      {% elif user.member.current_mode == 'Personal' %}
+                      <a href="{% url 'view-personal-paid-list' event.id %}" class="btn btn-outline-primary">Paid List</a>
+                      {% endif %}
                     </td>
                   </tr>
                   {% endfor %}
@@ -215,10 +268,14 @@
                 {% endif %}
               </table>
               {% if events|length > 0 %}
+              {% if user.member.current_mode == 'Admin' %}
               <a href="{% url 'select_member_to_pay' %}" class="btn btn-primary mt-3"><i class="mdi mdi-cash-multiple"></i> Pay Now</a>
+              {% endif %}
               {% else %}
               {% if user.member.current_mode == 'Admin' %}
               <a href="{% url 'create-event' %}" class="btn btn-primary mt-3">Create Event</a>
+              {% elif user.member.current_mode == 'Personal' %}
+              <a href="{% url 'create-personal-event' %}" class="btn btn-outline-success mt-3">Create Event</a>
               {% endif %}
               {% endif %}
             </div>

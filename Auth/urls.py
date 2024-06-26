@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import login_member, login_admin, reset_password, send_reset_code, logout_user, change_password, register_member, verify_email, switch_association, switch_to_admin, switch_to_member, register_exists
+from .views import login_member, login_admin, reset_password, send_reset_code, logout_user, change_password, register_member, verify_email, switch_association, switch_to_admin, switch_to_member, register_exists, switch_to_personal_account
 
 
 urlpatterns = [
@@ -14,5 +14,6 @@ urlpatterns = [
     path('switch-to-member/', switch_to_member, name='switch-to-member'),
     path('switch-to-admin/', switch_to_admin, name='switch-to-admin'),
     path('register-exists/', register_exists, name='register-exists'),
+    path('switch-to-personal-account/', switch_to_personal_account, name='switch-to-personal-account'),
     path('logout/', logout_user, name='logout'),
 ]

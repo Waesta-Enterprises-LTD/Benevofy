@@ -66,14 +66,18 @@
                 <div class="count-indicator">
                   <img
                     class="img-xs rounded-circle"
-                    src="{{ user.member.logged_in_association.logo.url }}"
+                    src="{% if user.member.logged_in_association %}{{ user.member.logged_in_association.logo.url }}{% else %}{% static 'images/ico.png' %}{% endif %}"
                     alt=""
                   />
                   <span class="count bg-success"></span>
                 </div>
                 <div class="profile-name">
                   <h5 class="mb-0 font-weight-normal">
+                    {% if user.member.logged_in_association %}
                     {{ user.member.logged_in_association.name|truncatechars:15 }}
+                    {% else %}
+                    Personal
+                    {% endif %}
                   </h5>
                   {% if user.member.logged_in_association.email %}
                   <span title="{{ user.email }}"
@@ -194,6 +198,7 @@
             </a>
           </li>
           {% endif %}
+          {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
           <li class="nav-item menu-items{% if request.path == '/Savings/view_savings/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_savings' %}">
               <span class="menu-icon">
@@ -202,6 +207,8 @@
               <span class="menu-title">Savings</span>
             </a>
           </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
           <li class="nav-item menu-items{% if request.path == '/Loans/view_loans/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_loans' %}">
               <span class="menu-icon">
@@ -210,6 +217,8 @@
               <span class="menu-title">Loans</span>
             </a>
           </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
           <li class="nav-item menu-items{% if request.path == '/Polls/view_polls/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'polls' %}">
               <span class="menu-icon">
@@ -218,6 +227,17 @@
               <span class="menu-title">Polls</span>
             </a>
           </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Personal' %}
+          <li class="nav-item menu-items{% if request.path == '/Events/view_events/' %} active{% endif %}">
+            <a class="nav-link" href="{% url 'view-personal-events' %}">
+              <span class="menu-icon">
+                <i class="mdi mdi-calendar-multiple-check"></i>
+              </span>
+              <span class="menu-title">Events</span>
+            </a>
+          </li>
+          {% endif %}
         </ul>
       </nav>
       <!-- partial -->
@@ -312,6 +332,29 @@
                   </a>
                   <div class="dropdown-divider"></div>
                   {% endfor %}
+                  <a class="dropdown-item preview-item" href="{% url 'switch-to-personal-account' %}">
+                    <div class="preview-thumbnail">
+                      {% if not user.member.picture %}
+                    <img
+                      class="img-xs rounded-circle {% if not user.member.logged_in_association %} border border-success{% endif %}"
+                      src="{% static 'images/'|add:user.member.gender|add:'.jpg' %}"
+                      alt=""
+                    />
+                    {% else %}
+                    <img
+                      class="img-xs rounded-circle {% if not user.member.logged_in_association %} border border-success{% endif %}"
+                      src="{{ user.member.picture.url }}"
+                      alt=""
+                    />
+                    {% endif %}
+                    </div>
+                    <div class="preview-item-content">
+                      <p class="preview-subject ellipsis mb-1">
+                        Personal
+                      </p>
+                    </div>
+                  </a>
+                  <div class="dropdown-divider"></div>
                 </div>
               </li>
               <li class="nav-item dropdown">

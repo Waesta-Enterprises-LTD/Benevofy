@@ -1,6 +1,6 @@
 from django import forms
 from django.db import models
-from .models import Event
+from .models import Event, PersonalEvent
 
 
 class EventForm(forms.ModelForm):
@@ -29,3 +29,26 @@ class EventForm(forms.ModelForm):
 
 
 
+class PersonalEventForm(forms.ModelForm):
+    class Meta:
+        model = PersonalEvent
+        fields = '__all__'
+        exclude = ['contributions', 'status', 'budget', 'member', 'pledges']
+
+    def __init__(self, *args, **kwargs):
+        super(PersonalEventForm, self).__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.DateInput):
+                field.widget.input_type = 'date'
+                field.widget.attrs['class'] = 'form-control mb-3 datepicker'
+                field.widget.attrs['data-provide'] = 'datepicker'
+            elif isinstance(field.widget, forms.TimeInput):
+                field.widget.input_type = 'time'
+                field.widget.attrs['class'] = 'form-control mb-3 timepicker'
+                field.widget.attrs['data-provide'] = 'timepicker'
+            elif isinstance(field.widget, forms.DateTimeInput):
+                field.widget.input_type = 'datetime-local'
+                field.widget.attrs['class'] = 'form-control mb-3 datetimepicker'
+                field.widget.attrs['data-provide'] = 'datetimepicker'
+            else:
+                field.widget.attrs['class'] = 'form-control mb-3'

@@ -66,6 +66,8 @@ INSTALLED_APPS = [
     'Biodata',
     'Suspensions',
     'Withdraws',
+    'Budgets',
+    'Pledges',
 ]
 
 MIDDLEWARE = [

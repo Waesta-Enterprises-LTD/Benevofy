@@ -17,57 +17,64 @@ from datetime import datetime, timedelta
 from barcode import EAN13 
 from barcode.writer import ImageWriter 
 import random
+from django.db import models
 
 
 
 @login_required(login_url='login-member')
 def member_dashboard(request):
-    events = Event.objects.filter(status='Active', association=request.user.member.logged_in_association)
-    paginator = Paginator(Member.objects.filter(associations=request.user.member.logged_in_association), 6)
-    page = request.GET.get('page')
-    members = paginator.get_page(page)
-    member_count = Member.objects.filter(associations=request.user.member.logged_in_association).count()
-    polls = Poll.objects.filter(association=request.user.member.logged_in_association)
-    labels = ['PAID', 'UNPAID']
-    values = [30, 40]
+    if request.user.member.logged_in_association:
+        events = Event.objects.filter(status='Active', association=request.user.member.logged_in_association)
+        paginator = Paginator(Member.objects.filter(associations=request.user.member.logged_in_association), 6)
+        page = request.GET.get('page')
+        members = paginator.get_page(page)
+        member_count = Member.objects.filter(associations=request.user.member.logged_in_association).count()
+        polls = Poll.objects.filter(association=request.user.member.logged_in_association)
+        labels = ['PAID', 'UNPAID']
+        values = [30, 40]
 
-    # Create the donut chart
-    fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4, 
-                                 marker=dict(colors=['green', 'red'], 
-                                            line=dict(color='black', width=1)))])
-    fig.update_layout(
-        autosize=True,
-        margin=dict(
-            l=10,
-            r=10,
-            b=10,
-            t=10,
-            pad=4
-        ),
-        annotations=[dict(
-            showarrow=False,
-            text="",
-            x=0.5,
-            y=0.5
-        )],
-        width=300,
-        height=300
-    )
-    
-    # Convert the Plotly figure to JSON
-    html_content = pio.to_html(fig, full_html=False)
-    association = request.user.member.logged_in_association
-    participated_events_last_10 = association.events.filter(contributions__user=request.user.member).order_by('-created_at')[:10].count()
-    try:
-        last_10 = (participated_events_last_10 / association.events.all().count()) * 100
-    except ZeroDivisionError:
-        last_10 = 0
-    try:
-        overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
-    except ZeroDivisionError:
-        overall_participation = 0
-    form = SuspensionForm()
-    return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation, 'form': form})
+        # Create the donut chart
+        fig = go.Figure(data=[go.Pie(labels=labels, values=values, hole=.4, 
+                                    marker=dict(colors=['green', 'red'], 
+                                                line=dict(color='black', width=1)))])
+        fig.update_layout(
+            autosize=True,
+            margin=dict(
+                l=10,
+                r=10,
+                b=10,
+                t=10,
+                pad=4
+            ),
+            annotations=[dict(
+                showarrow=False,
+                text="",
+                x=0.5,
+                y=0.5
+            )],
+            width=300,
+            height=300
+        )
+        
+        # Convert the Plotly figure to JSON
+        html_content = pio.to_html(fig, full_html=False)
+        association = request.user.member.logged_in_association
+        participated_events_last_10 = association.events.filter(contributions__user=request.user.member).order_by('-created_at')[:10].count()
+        try:
+            last_10 = (participated_events_last_10 / association.events.all().count()) * 100
+        except ZeroDivisionError:
+            last_10 = 0
+        try:
+            overall_participation = (association.events.filter(contributions__user=request.user.member).count() / association.events.all().count()) * 100
+        except ZeroDivisionError:
+            overall_participation = 0
+        form = SuspensionForm()
+        return render(request, 'benevofy/member_dashboard.html', {'events': events, 'members': members, 'polls': polls, 'member_count': member_count, 'html_content': html_content, 'last_10': last_10, 'overall_participation': overall_participation, 'form': form})
+    else:
+        events = request.user.member.events.filter(status='Active')
+        total_contributions = events.annotate(contributions_count=models.Count('contributions')).aggregate(total=models.Sum('contributions_count'))['total']
+        total_pledges = events.annotate(pledges_count=models.Count('pledges')).aggregate(total=models.Sum('pledges_count'))['total']
+        return render(request, 'benevofy/member_dashboard.html', {'events': events, 'total_contributions': total_contributions, 'total_pledges': total_pledges})
 
 
 def profile(request):

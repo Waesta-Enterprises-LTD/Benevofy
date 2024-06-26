@@ -3,10 +3,10 @@ from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.urls import reverse
-from Events.models import Event
-from Contributions.models import EventContribution
+from Events.models import Event, PersonalEvent
+from Contributions.models import EventContribution, PersonalEventContribution
 import logging
-from .forms import ContributeEventForm, ContributionForm
+from .forms import ContributeEventForm, ContributionForm, PersonalContributionForm
 from uuid import uuid4
 import requests
 from django.http import HttpResponse
@@ -105,3 +105,49 @@ def select_member_to_pay(request):
         member_id = member_id.replace(' ', '')
         return redirect(reverse('select_events', args=[member_id]))
     return render(request, 'benevofy/select_member_to_pay.html')
+
+
+def contribute_to_personal_event(request,  event_id):
+    event = PersonalEvent.objects.get(pk=event_id)
+    reference = str(uuid4())
+    if request.method == 'POST':
+        form = PersonalContributionForm(request.POST)
+        if form.is_valid():
+            phone = form.cleaned_data['phone']
+            if phone.startswith('256'):
+                currency = 'UGX'
+            elif phone.startswith('254'):
+                currency = 'KES' 
+            else:
+                return render(request, 'benevofy/pay_for_personal_event.html', {'error': 'Invalid phone number. The number should have a country code.', 'event': event, 'form': form})
+            form.instance.personal_event = event
+            form.instance.reference = reference
+            form.instance.currency = currency
+            contribution = form.save()
+            amount = form.cleaned_data['amount']
+            member = request.user.member
+            url = "https://payments.relworx.com/api/mobile-money/request-payment"
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/vnd.relworx.v2",
+                "Authorization": "Bearer ec719b1a0db84d.YNrIn4iWVanw1Y0ptYvrVA"
+            }
+            payload = {
+                "account_no": 'REL9CF7A4FF90',
+                "reference": reference,
+                "msisdn": '+'+phone,
+                "currency": currency,
+                "amount": int(amount),
+                "description": "Personal Event Payment Request."
+            }
+            response = requests.request("POST", url, headers=headers, json=payload)
+            response = response.json()
+            print(response)
+            if response['success']:
+                return redirect('payment_initiated')
+            else:
+                contribution.delete()
+                return render(request, 'benevofy/pay_for_personal_event.html', {'error': 'Payment request failed. Contact your support.', 'event': event, 'form': form})
+    else:
+        form = PersonalContributionForm()
+        return render(request, 'benevofy/pay_for_personal_event.html', {'form': form, 'event': event})
