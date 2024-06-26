@@ -108,4 +108,5 @@ def add_manual_payment(request, event_id):
 
 def view_personal_paid_list(request, event_id):
     personal_event = PersonalEvent.objects.get(pk=event_id)
-    return render(request, 'benevofy/view_personal_paid_list.html', {'event': personal_event})
+    contributions = personal_event.contributions.filter(status='Paid').order_by('-created_at')
+    return render(request, 'benevofy/view_personal_paid_list.html', {'event': personal_event, 'contributions': contributions})

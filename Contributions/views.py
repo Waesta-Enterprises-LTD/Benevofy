@@ -124,6 +124,7 @@ def contribute_to_personal_event(request,  event_id):
             form.instance.reference = reference
             form.instance.currency = currency
             contribution = form.save()
+            event.contributions.add(contribution)
             amount = form.cleaned_data['amount']
             member = request.user.member
             url = "https://payments.relworx.com/api/mobile-money/request-payment"
