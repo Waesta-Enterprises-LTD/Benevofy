@@ -110,3 +110,8 @@ def view_personal_paid_list(request, event_id):
     personal_event = PersonalEvent.objects.get(pk=event_id)
     contributions = personal_event.contributions.filter(status='Paid').order_by('-created_at')
     return render(request, 'benevofy/view_personal_paid_list.html', {'event': personal_event, 'contributions': contributions})
+
+
+def add_manual_personal_event_payment(request, event_id):
+    if request.method == 'POST':
+        form = PersonalContributionForm(request.POST)

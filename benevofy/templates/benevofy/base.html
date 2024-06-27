@@ -168,7 +168,7 @@
             </a>
           </li>
           {% endif %}
-          {% if user.member.current_mode == 'Admin' %}
+          {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
           <li class="nav-item menu-items{% if request.path == '/Withdraws/view_withdraws/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_withdraws' %}">
               <span class="menu-icon">
@@ -198,9 +198,18 @@
             </a>
           </li>
           {% endif %}
-          {% if user.member.current_mode == 'Admin' or user.member.current_mode == 'Member' %}
+          {% if user.member.current_mode == 'Member' %}
           <li class="nav-item menu-items{% if request.path == '/Savings/view_savings/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_savings' %}">
+              <span class="menu-icon">
+                <i class="mdi mdi-cash-refund"></i>
+              </span>
+              <span class="menu-title">Savings</span>
+            </a>
+          </li>
+          {% elif user.member.current_mode == 'Admin' %}
+          <li class="nav-item menu-items{% if request.path == '/Savings/view_savings/' %} active{% endif %}">
+            <a class="nav-link" href="{% url 'view_monthly_savings' %}">
               <span class="menu-icon">
                 <i class="mdi mdi-cash-refund"></i>
               </span>
@@ -235,6 +244,16 @@
                 <i class="mdi mdi-calendar-multiple-check"></i>
               </span>
               <span class="menu-title">Events</span>
+            </a>
+          </li>
+          {% endif %}
+          {% if user.member.current_mode == 'Personal' %}
+          <li class="nav-item menu-items{% if request.path == '/Events/view_events/' %} active{% endif %}">
+            <a class="nav-link" href="{% url 'view_budgets' %}">
+              <span class="menu-icon">
+                <i class="mdi mdi-currency-usd"></i>
+              </span>
+              <span class="menu-title">Budgets</span>
             </a>
           </li>
           {% endif %}

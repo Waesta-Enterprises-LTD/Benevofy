@@ -8,4 +8,5 @@ urlpatterns = [
     path('<int:target_id>/savings/', views.view_target_savings, name='view_target_savings'),
     path('normal_saving/', views.normal_saving, name='normal_saving'),
     path('delete_target/<int:target_id>/', views.delete_target, name='delete_target'),
+    path('view_monthly_savings/', views.view_monthly_savings, name='view_monthly_savings'),
 ]

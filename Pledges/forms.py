@@ -5,8 +5,9 @@ from .models import Pledge
 class PledgeForm(forms.ModelForm):
     class Meta:
         model = Pledge
-        fields = ['email', 'phone', 'amount', 'due_date']
+        fields = ['names' ,'email', 'phone', 'amount', 'due_date']
         widgets = {
+            'names': forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Names'}),
             'email': forms.EmailInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Email Address'}),
             'phone': forms.TextInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Phone Number'}),
             'amount': forms.NumberInput(attrs={'class': 'form-control mb-3', 'placeholder': 'Amount'}),

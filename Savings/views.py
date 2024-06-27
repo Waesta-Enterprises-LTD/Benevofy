@@ -130,3 +130,7 @@ def delete_target(request, target_id):
     target = SavingTarget.objects.get(pk=target_id)
     target.delete()
     return redirect('view_savings')
+
+
+def view_monthly_savings(request):
+    return render(request, 'benevofy/view_monthly_savings.html')

@@ -172,7 +172,7 @@
                           </button>
                         </div>
                         <div class="modal-body">
-                          <form action="{% url 'event-report' event.id %}" method="get">
+                          <form action="{% url 'personal-event-report' event.id %}" method="get">
                             <div class="form-group">
                               <label for="from_date">From Date</label>
                               <input type="date" name="from_date" class="form-control" required>

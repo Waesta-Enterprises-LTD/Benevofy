@@ -201,6 +201,7 @@ def switch_association(request, association_id):
     request.user.member.logged_in_association = association
     request.user.member.current_mode = 'Member'
     request.user.member.save()
+    login(request, request.user)
     return redirect('member-dashboard')
 
 

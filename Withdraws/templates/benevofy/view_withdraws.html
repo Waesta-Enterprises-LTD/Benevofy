@@ -9,6 +9,7 @@
       <div class="card-body">
         <h4 class="card-title mb-3 d-flex justify-content-between align-items-center">
           Withdraws Table
+          {% if user.member.current_mode == 'Member' %}
           <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#myModal">
             <i class="mdi mdi-plus"></i> Request Withdraw
           </button>
@@ -36,6 +37,7 @@
               </div>
             </div>
           </div>
+          {% endif %}
         </h4>
 
         <div class="row mb-3">
@@ -63,7 +65,7 @@
               </tr>
             </thead>
             <tbody>
-              {% for withdraw in user.member.withdraws.all %}
+              {% for withdraw in user.member.withdraws.all|dictsortreversed:"created_at" %}
               <tr>
                 <td>{{ withdraw.id }}</td>
                 <td>{{ withdraw.amount|intcomma }} UGX</td>
@@ -95,6 +97,7 @@
                     </div>
                   </div>
                   {% if withdraw.status == 'Pending' %}
+                  {% if user.member.current_mode == 'Admin' %}
                   <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#approveModal{{ withdraw.id }}"><i class="mdi mdi-check"></i> Approve</button>
 
                   <!-- Modal -->
@@ -140,7 +143,7 @@
                             {% csrf_token %}
                             <div class="form-group">
                               <label for="reason">Reason</label>
-                              <textarea class="form-control" id="reason" name="" rows="3"></textarea>
+                              <textarea required class="form-control" id="reason" name="reason" rows="3"></textarea>
                             </div>
                             <button type="submit" class="btn btn-danger">Reject</button>
                           </form>
@@ -151,6 +154,7 @@
                       </div>
                     </div>
                   </div>
+                  {% endif %}
                   <button type="button" class="btn btn-outline-warning" data-toggle="modal" data-target="#cancelModal{{ withdraw.id }}"><i class="mdi mdi-cancel"></i> Cancel</button>
 
                   <!-- Modal -->
@@ -167,7 +171,7 @@
                           <p>Are you sure you want to cancel this withdraw request?</p>
                         </div>
                         <div class="modal-footer">
-                            <a href="" class="btn btn-warning">Cancel</a>
+                            <a href="{% url 'cancel_withdraw' withdraw.id %}" class="btn btn-warning">Cancel</a>
                             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
                       </div>

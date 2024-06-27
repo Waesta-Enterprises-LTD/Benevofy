@@ -1,6 +1,7 @@
 from django.db import models
 
 class Pledge(models.Model):
+    names = models.CharField(max_length=200, null=True, blank=True)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     event = models.ForeignKey('Events.PersonalEvent', on_delete=models.CASCADE)

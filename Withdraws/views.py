@@ -30,7 +30,7 @@ def reject_withdraw(request, withdraw_id):
     # send email
     subject = f'Withdraw request rejected - {withdraw.association.name}'
     message = f'Withdraw request with amount of {withdraw.amount} has been rejected. Reason: {reason}'
-    from_email = 'info@benevofy.net'
+    from_email = f'{request.user.member.logged_in_association.name} <info@benevofy.net>'
     recipient_list = [withdraw.user.user.email]
     send_mail(subject, message, from_email, recipient_list)
     return redirect('view_withdraws')
@@ -62,4 +62,11 @@ def approve_withdraw(request, withdraw_id):
         withdraw.status = 'Approved'
         withdraw.reference = str(reference)
         withdraw.save()
+    return redirect('view_withdraws')
+
+
+
+def cancel_withdraw(request, withdraw_id):
+    withdraw = Withdraw.objects.get(id=withdraw_id)
+    withdraw.delete()
     return redirect('view_withdraws')
