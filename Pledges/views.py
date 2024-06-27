@@ -24,7 +24,7 @@ def pledge(request, event_id):
         if form.is_valid():
             form.instance.event = event
             pledge = form.save()
-            image = Image.open('pledge_card.jpg')
+            image = Image.open('pledge_card-01.jpg')
             draw = ImageDraw.Draw(image)
             font = ImageFont.truetype('ch.ttf', 70)
             names = form.cleaned_data.get('names')
@@ -34,6 +34,7 @@ def pledge(request, event_id):
             due_date = form.cleaned_data.get('due_date')
             draw.text((1500, 323), f"{names}", font=font, fill=(0, 0, 255))
             draw.text((1580, 484), f"{phone}", font=font, fill=(0, 0, 255))
+            draw.text((2500, 484), f"{email}", font=font, fill=(0, 0, 255))
             draw.text((1530, 620), f"{amount} UGX", font=font, fill=(0, 0, 255))
             draw.text((1550, 774), f"{due_date.strftime('%d/%m/%Y')}", font=font, fill=(0, 0, 255))
             draw.text((2830, 774), f"{event.event_date.strftime('%d/%m/%Y')}", font=font, fill=(0, 0, 255))
@@ -43,21 +44,17 @@ def pledge(request, event_id):
                 version=3,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
                 box_size=10,
-                border=4,
+                border=0,
             )
             pay_link = f"http://{request.META['HTTP_HOST']}{reverse('contribute_to_personal_event', args=[event.id])}"
             qr.add_data(pay_link)
             qr.make(fit=True)
 
             # Generate QR code image
-            qr_image = qr.make_image(fill_color="black", back_color="white")
+            qr_image = qr.make_image(fill_color="white", back_color="red")
 
-            # Add QR code to the image
-            qr_width, qr_height = qr_image.size
-            image_width, image_height = image.size
-            qr_x = image_width - qr_width - 10
-            qr_y = image_height - qr_height - 10
-            image.paste(qr_image, (qr_x, qr_y))
+            
+            image.paste(qr_image, (3170, 1000))
 
             card_path = f'{names}-pledge_card.jpg'
             card_io = BytesIO()
