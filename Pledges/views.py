@@ -13,7 +13,8 @@ from django.http import FileResponse
 
 def view_pledges(request, event_id):
     event = PersonalEvent.objects.get(id=event_id)
-    return render(request, 'benevofy/view_pledges.html', {'event': event})
+    form = PledgeForm()
+    return render(request, 'benevofy/view_pledges.html', {'event': event, 'form': form})
 
 
 def pledge(request, event_id):
@@ -24,6 +25,7 @@ def pledge(request, event_id):
         if form.is_valid():
             form.instance.event = event
             pledge = form.save()
+            event.pledges.add(pledge)
             image = Image.open('pledge_card-01.jpg')
             draw = ImageDraw.Draw(image)
             font = ImageFont.truetype('ch.ttf', 70)

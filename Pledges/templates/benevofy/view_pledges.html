@@ -23,14 +23,14 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form method="post" enctype="multipart/form-data" style="padding: 10px;">
+                  <form method="post" action="{% url 'pledge' event.id %}" enctype="multipart/form-data" style="padding: 10px;">
                     {% csrf_token %}
                     {{ form.as_p }}
+                    <button type="submit" class="btn btn-success btn-block"><i class="mdi mdi-download"></i> Download Pledge Card </button>
                   </form>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
               </div>
             </div>
@@ -43,6 +43,7 @@
               <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Phone</th>
                 <th>Amount</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -52,10 +53,57 @@
               {% for pledge in event.pledges.all %}
               <tr>
                 <td>{{ pledge.id }}</td>
-                <td>{{ pledge.member.full_name }}</td>
+                <td>{{ pledge.names }}</td>
+                <td>{{ pledge.phone }}</td>
                 <td>{{ pledge.amount|intcomma }} UGX {% if pledge.amount_kes %}/ {{ pledge.amount_kes|intcomma }} KES{% endif %}</td>
                 <td>{{ pledge.status }}</td>
-                <td></td>
+                <td>
+                  <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal-{{ pledge.id }}">
+                    <i class="mdi mdi-delete"></i> Delete
+                  </button>
+                  <div class="modal fade" id="deleteModal-{{ pledge.id }}" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="deleteModalLabel">Delete Pledge</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to delete this pledge?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                          <a href="" class="btn btn-danger"><i class="mdi mdi-delete"></i> Delete</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#paidModal-{{ pledge.id }}">
+                    <i class="mdi mdi-check"></i> Paid
+                  </button>
+                  <div class="modal fade" id="paidModal-{{ pledge.id }}" tabindex="-1" role="dialog" aria-labelledby="paidModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="paidModalLabel">Mark Pledge as Paid</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          Are you sure you want to mark this pledge as paid?
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                          <a href="" class="btn btn-success"><i class="mdi mdi-check"></i> Paid</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <a href="" class="btn btn-outline-primary btn-sm"><i class="mdi mdi-download"></i> Card</a>
+                </td>
               </tr>
               {% empty %}
               <tr>
