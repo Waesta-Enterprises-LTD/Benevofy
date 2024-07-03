@@ -12,7 +12,7 @@
         <div class="card-body">
           <h4 class="card-title">Registration Link (Unpaid)</h4>
           <div class="d-flex align-items-center">
-            <input type="text" id="registration-link" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-member' user.member.logged_in_association.registration_code %}" readonly>
+            <input type="text" id="registration-link" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-exists' user.member.logged_in_association.registration_code %}" readonly>
             <button class="btn btn-outline-primary" onclick="copyLinkToClipboard_()">Copy</button>
           </div>
           <script>
@@ -32,7 +32,7 @@
         <div class="card-body">
           <h4 class="card-title">Registration Link (Paid)</h4>
           <div class="d-flex align-items-center">
-            <input type="text" id="registration-link-paid" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-member' user.member.logged_in_association.registration_code_paid %}" readonly>
+            <input type="text" id="registration-link-paid" class="form-control flex-grow-1 mr-2 text-dark" value="http://{{ request.get_host }}{% url 'register-exists' user.member.logged_in_association.registration_code_paid %}" readonly>
             <button class="btn btn-outline-primary" onclick="copyLinkToClipboard()">Copy</button>
           </div>
           <script>

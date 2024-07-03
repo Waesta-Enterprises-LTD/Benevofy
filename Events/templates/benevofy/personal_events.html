@@ -74,6 +74,7 @@
                             <button type="button" class="btn btn-primary mt-2" onclick="copyPledgeLink('pledge-link-input-{{ event.id }}')"><i class="mdi mdi-content-copy"></i> Copy</button>
                           </div>
                         <div class="modal-footer">
+                          <a href="{% url 'view-personal-paid-list' event.id %}" class="btn btn-outline-success">Paid List</a>
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                           <script>
                             function copyPayLink(id) {
@@ -188,10 +189,10 @@
                                 <option value="pdf">PDF</option>
                               </select>
                             </div>
+                          <button type="submit" class="btn btn-block btn-success">Download</button>
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <button type="submit" class="btn btn-primary">Download</button>
                         </div>
                       </div>
                     </div>

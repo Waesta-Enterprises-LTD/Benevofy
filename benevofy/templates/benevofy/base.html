@@ -238,7 +238,7 @@
           </li>
           {% endif %}
           {% if user.member.current_mode == 'Personal' %}
-          <li class="nav-item menu-items{% if request.path == '/Events/view_events/' %} active{% endif %}">
+          <li class="nav-item menu-items{% if request.path == '/Events/view-personal-events/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view-personal-events' %}">
               <span class="menu-icon">
                 <i class="mdi mdi-calendar-multiple-check"></i>
@@ -248,7 +248,7 @@
           </li>
           {% endif %}
           {% if user.member.current_mode == 'Personal' %}
-          <li class="nav-item menu-items{% if request.path == '/Events/view_events/' %} active{% endif %}">
+          <li class="nav-item menu-items{% if request.path == '/Budgets/' %} active{% endif %}">
             <a class="nav-link" href="{% url 'view_budgets' %}">
               <span class="menu-icon">
                 <i class="mdi mdi-currency-usd"></i>

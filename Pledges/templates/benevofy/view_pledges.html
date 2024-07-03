@@ -58,6 +58,7 @@
                 <td>{{ pledge.amount|intcomma }} UGX {% if pledge.amount_kes %}/ {{ pledge.amount_kes|intcomma }} KES{% endif %}</td>
                 <td>{{ pledge.status }}</td>
                 <td>
+                  {% if pledge.status == 'Unpaid' %}
                   <button type="button" class="btn btn-outline-danger btn-sm" data-toggle="modal" data-target="#deleteModal-{{ pledge.id }}">
                     <i class="mdi mdi-delete"></i> Delete
                   </button>
@@ -75,7 +76,7 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <a href="" class="btn btn-danger"><i class="mdi mdi-delete"></i> Delete</a>
+                          <a href="{% url 'delete_pledge' pledge.id %}" class="btn btn-danger"><i class="mdi mdi-delete"></i> Delete</a>
                         </div>
                       </div>
                     </div>
@@ -97,17 +98,20 @@
                         </div>
                         <div class="modal-footer">
                           <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                          <a href="" class="btn btn-success"><i class="mdi mdi-check"></i> Paid</a>
+                          <a href="{% url 'mark_paid' pledge.id %}" class="btn btn-success"><i class="mdi mdi-check"></i> Paid</a>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <a href="" class="btn btn-outline-primary btn-sm"><i class="mdi mdi-download"></i> Card</a>
+                  {% endif %}
+                  {% if pledge.status == 'Paid' %}
+                  <a href="{% url 'paid_card' pledge.id %}" class="btn btn-outline-success btn-sm"><i class="mdi mdi-download"></i> Card</a>
+                  {% endif %}
                 </td>
               </tr>
               {% empty %}
               <tr>
-                <td colspan="5" class="text-center">No pledges found.</td>
+                <td colspan="6" class="text-center">No pledges found.</td>
               </tr>
               {% endfor %}
             </tbody>

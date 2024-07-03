@@ -10,7 +10,9 @@ from Members.models import Member
 from Associations.models import Association
 from Payments.models import RegistrationPayment
 from uuid import uuid4
+from django.db.models import Q
 import requests
+from django.contrib import messages
 
 
 def login_member(request):
@@ -71,6 +73,7 @@ def reset_password(request):
             user = PasswordResetToken.objects.get(token=reset_code).user
             user.user.set_password(new_password)
             user.save()
+            messages.success(request, 'Password reset successful')
             return redirect('login-member')
         else:
             return render(request, 'benevofy/reset_password.html', {'error': 'Passwords do not match'})
@@ -135,66 +138,30 @@ def change_password(request):
         return render(request, 'benevofy/change_password.html')
 
 
-def register_member(request, registration_code):
-    logout(request)
-    try:
-        association = Association.objects.get(registration_code=registration_code)
-        paid = False
-    except Association.DoesNotExist:
-        try:
-            association = Association.objects.get(registration_code_paid=registration_code)
-            paid = True
-        except Association.DoesNotExist:
-            return render(request, 'benevofy/register_member.html', {'error': 'Registration link expired. Please contact the association administrator.', 'expired': True})
-    exists = request.GET.get('exists')
-    if exists == 'true':
-        return render(request, 'benevofy/enter_email.html', {'registration_code': str(registration_code), 'association': association, 'paid': paid})
-    elif not exists: 
-        return render(request, 'benevofy/do_you_exist.html')
+def register(request):
     if request.method == 'POST':
         first_name = request.POST.get('first_name')
         last_name = request.POST.get('last_name')
-        phone = request.POST.get('phone')
         email = request.POST.get('email')
+        phone = request.POST.get('phone')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         gender = request.POST.get('gender')
         if password == confirm_password:
-            if User.objects.filter(username=email).exists():
-                return render(request, 'benevofy/register_member.html', {'error': 'Username already exists', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
-            elif User.objects.filter(email=email).exists():
-                return render(request, 'benevofy/register_member.html', {'error': 'Email already exists', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
-            else:
+            try:
+                User.objects.get(username=email)
+                return render(request, 'benevofy/register.html', {'error': 'Email already exists'})
+            except User.DoesNotExist:
                 user = User.objects.create_user(username=email, email=email, password=password, first_name=first_name, last_name=last_name)
-                user.save()
-                verification_code = uuid4()
-                member = Member.objects.create(user=user, gender=gender, phone=phone, verification_code=verification_code)
-                if paid:
-                    member.associations.add(association)
-                    member.logged_in_association = association
-                    member.phone = phone
-                    member.verification_code = verification_code
-                    member.save()
-                    association.registration_code = uuid4()
-                    association.save()
-                    association.members.add(member)
-                subject = 'Benevofy Email Verification'
-                message = render_to_string('benevofy/verification_email.html', {
-                    'user': user,
-                    'verification_code': str(verification_code),
-                    'request': request
-                })
-                from_email = settings.DEFAULT_FROM_EMAIL
-                to_email = [user.email]
-                send_mail(subject, message, from_email, to_email, fail_silently=False, html_message=message)
-                if paid:
-                    return redirect('login-member')
-                else:
-                    return render(request, 'benevofy/enter_email.html', {'email': email, 'error': 'Pay registration fee to continue', 'registration_code': str(registration_code), 'association': association, 'paid': paid})
+                member = Member.objects.create(user=user, phone=phone, gender=gender)
+                member.user = user
+                member.save()
+                messages.success(request, 'A verification link has been sent to your email.')
+                return redirect('login-member')
         else:
-            return render(request, 'benevofy/register_member.html', {'error': 'Passwords do not match', 'first_name': first_name, 'last_name': last_name, 'registration_code': str(registration_code), 'association': association})
+            return render(request, 'benevofy/register.html', {'error': 'Passwords do not match'})
     else:
-        return render(request, 'benevofy/register_member.html', {'registration_code': str(registration_code), 'association': association, 'expired': False})
+        return render(request, 'benevofy/register.html')
 
 def switch_association(request, association_id):
     association = Association.objects.get(id=association_id)
@@ -233,19 +200,21 @@ def verify_email(request, verification_code):
         member = Member.objects.get(verification_code=verification_code)
         member.email_verified = True
         member.save()
+        messages.success(request, 'Account verified successfully')
         return redirect('login-member')
     except Member.DoesNotExist:
         return redirect('login-member')
 
 
 
-def register_exists(request):
+def register_exists(request, registration_code):
+    logout(request)
+    association_id = request.POST.get('association')
+    association = Association.objects.get(Q(registration_code=registration_code) | Q(registration_code_paid=registration_code))
+    paid = (registration_code == association.registration_code_paid)
     if request.method == 'POST':
         email = request.POST.get('email')
-        association_id = request.POST.get('association')
-        association = Association.objects.get(id=association_id)
         member = Member.objects.get(user__email=email)
-        paid = request.POST.get('paid')
         try:
             association.members.get(user__email=email)
             return render(request, 'benevofy/enter_email.html', {'error': 'User already registered in this association.', 'registration_code': str(association.registration_code), 'association': association, 'paid': (paid == 'true')})
@@ -279,7 +248,7 @@ def register_exists(request):
             elif phone.startswith('254'):
                 currency = 'KES' 
             else:
-                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'paid': paid, 'association': association})
+                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Invalid phone number. The number should have a country code.', 'paid': paid, 'association': association, 'registration_code': str(association.registration_code)})
             payload = {
                 "account_no": association.rel_account,
                 "reference": reference,
@@ -300,7 +269,8 @@ def register_exists(request):
                 )
                 return redirect('login-member')
             else:
-                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Failed to make payment. Contact support.', 'paid': paid, 'association': association})
-
+                return render(request, 'benevofy/enter_email.html', {'member': member, 'error': 'Failed to make payment. Contact support.', 'paid': paid, 'association': association, 'registration_code': str(association.registration_code)})
+    else:
+        return render(request, 'benevofy/enter_email.html', {'association': association, 'registration_code': str(association.registration_code), 'paid': paid})
 
 

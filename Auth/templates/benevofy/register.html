@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="card-body px-5 py-5">
-  <h3 class="card-title text-left mb-3">Register Member</h3>
+  <h3 class="card-title mb-3">Register</h3>
   <form method="POST">
     {% csrf_token %}
     {% if error %}
@@ -20,6 +20,14 @@
       <input type="text" class="form-control p_input" name="last_name" value="{{ last_name }}" required />
     </div>
     <div class="form-group">
+      <label>Gender *</label>
+      <select class="form-control p_input" name="gender" required>
+        <option value="">Select</option>
+        <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
+        <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
+      </select>
+    </div>
+    <div class="form-group">
       <label>Email *</label>
       <input type="email" class="form-control p_input" name="email" value="{{ email }}" required />
     </div>
@@ -34,22 +42,6 @@
     <div class="form-group">
       <label>Confirm Password *</label>
       <input type="password" class="form-control p_input" name="confirm_password" value="{{ confirm_password }}" required />
-    </div>
-    <div class="form-group">
-      <label>Gender *</label>
-      <select class="form-control p_input" name="gender" required>
-        <option value="">Select</option>
-        <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
-        <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Registration Code *</label>
-      <input type="text" class="form-control p_input text-dark" value="{{ registration_code }}" name="reg_code" required readonly />
-    </div>
-    <div class="form-group">
-      <label>Association *</label>
-      <input type="text" class="form-control p_input text-dark" value="{{ association.name }}" name="association" required readonly />
     </div>
     <div class="text-center">
       <button type="submit" class="btn btn-success btn-block enter-btn">

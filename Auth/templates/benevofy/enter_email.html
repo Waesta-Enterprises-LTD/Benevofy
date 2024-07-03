@@ -1,8 +1,16 @@
 {% extends 'benevofy/auth_base.html' %} 
 
+{% load static %}
+
 {% block content %}
 <div class="card-body px-5 py-5">
-  <form method="POST" action="{% url 'register-exists' %}">
+  <div class="text-center">
+    <h3 class="card-title mb-3">Join Association</h3>
+    <div class="mb-3" style="width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto;">
+      <img width="100" src="{{ association.logo.url }}" class="img-fluid " alt="" style="height: auto;">
+    </div>
+  </div>
+  <form method="POST" action="{% url 'register-exists' registration_code %}">
     {% csrf_token %}
     {% if paid %}
     <input type="hidden" name="paid" value="true">
